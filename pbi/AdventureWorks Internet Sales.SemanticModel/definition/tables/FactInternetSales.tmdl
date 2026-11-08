@@ -1,0 +1,461 @@
+table FactInternetSales
+	lineageTag: 2395d38c-9637-4f4b-a6fb-0d0b1c095f54
+
+	measure Revenue = SUMX(FactInternetSales, FactInternetSales[UnitPrice] * FactInternetSales[OrderQuantity])
+		formatString: #,0.00
+		displayFolder: 01 Core
+		lineageTag: 3cda8742-fe51-4dac-b66f-3803df012c58
+
+	measure 'Gross Profit' = SUMX(FactInternetSales, (FactInternetSales[UnitPrice] - FactInternetSales[UnitCost]) * FactInternetSales[OrderQuantity])
+		formatString: #,0.00
+		displayFolder: 01 Core
+		lineageTag: 3fa02129-117b-43b3-9cbc-193712af9d01
+
+	measure 'Gross Margin %' = DIVIDE([Gross Profit], [Revenue])
+		formatString: 0.00%
+		displayFolder: 01 Core
+		lineageTag: 895e686b-87b0-4e3d-8a77-f940fb0fcf4f
+
+	measure Orders = DISTINCTCOUNT(FactInternetSales[SalesOrderNumber])
+		formatString: #,0
+		displayFolder: 01 Core
+		lineageTag: 5b21e0d9-f3a5-423c-8c79-3257fb243561
+
+	measure Units = SUM(FactInternetSales[OrderQuantity])
+		formatString: #,0
+		displayFolder: 01 Core
+		lineageTag: 6019fc9a-7274-40a1-af63-f62145648053
+
+	measure AOV = DIVIDE([Revenue], [Orders])
+		formatString: #,0.00
+		displayFolder: 01 Core
+		lineageTag: f96351dc-f3a6-4d61-9430-3e0bd9373407
+
+	measure 'Freight Cost' = SUM(FactInternetSales[LineFreight])
+		formatString: #,0.00
+		displayFolder: 01 Core
+		lineageTag: 1806fafb-9edd-40bf-8049-db4de62c7494
+
+	measure 'Freight % of Revenue' = DIVIDE([Freight Cost], [Revenue])
+		formatString: 0.00%
+		displayFolder: 01 Core
+		lineageTag: fe35c87b-af8d-4aef-8b29-092c0975a2c2
+
+	measure Customers = DISTINCTCOUNT(FactInternetSales[CustomerKey])
+		formatString: #,0
+		displayFolder: 02 Customers
+		lineageTag: 946d1a28-a07c-4edf-9da5-fbbe730d7f87
+
+	measure 'Revenue per Customer' = DIVIDE([Revenue], [Customers])
+		formatString: #,0.00
+		displayFolder: 02 Customers
+		lineageTag: a0bc2877-fda9-4991-ae40-00e1cafdff74
+
+	measure 'Orders per Customer' = DIVIDE([Orders], [Customers])
+		formatString: 0.00
+		displayFolder: 02 Customers
+		lineageTag: 35ffe6db-4db5-4117-87af-d39d039b351f
+
+	measure 'Repeat Customers' = COUNTROWS(FILTER(SUMMARIZE(FactInternetSales, FactInternetSales[CustomerKey], "OrderCount", DISTINCTCOUNT(FactInternetSales[SalesOrderNumber])), [OrderCount] >= 2))
+		formatString: #,0
+		displayFolder: 02 Customers
+		lineageTag: 4846ecc7-96ec-4ca6-995f-65660e37ded2
+
+	measure 'Repeat Rate' = DIVIDE([Repeat Customers], [Customers])
+		formatString: 0.00%
+		displayFolder: 02 Customers
+		lineageTag: 1b6888b7-720b-42b7-a082-6e0d1f7c6d1e
+
+	measure Lines = COUNTROWS(FactInternetSales)
+		formatString: #,0
+		displayFolder: 03 Fulfillment
+		lineageTag: 9f4bb92e-6cca-4596-94ce-851bb4317a97
+
+	measure 'Avg Lead Days' = AVERAGE(FactInternetSales[LeadDays])
+		formatString: 0.00
+		displayFolder: 03 Fulfillment
+		lineageTag: 89ce9dba-580a-4b9d-9c7f-e5cc3220e318
+
+	measure 'Late Lines' = CALCULATE(COUNTROWS(FactInternetSales), KEEPFILTERS(FactInternetSales[LateDays] > 0)) + 0
+		formatString: #,0
+		displayFolder: 03 Fulfillment
+		lineageTag: b86f734f-4f77-4b3e-abf9-0ac75a910414
+
+	measure 'Late Line Rate' = DIVIDE([Late Lines], [Lines], 0)
+		formatString: 0.00%
+		displayFolder: 03 Fulfillment
+		lineageTag: b4479a58-f801-4c9e-bff8-9e3b9a0f138c
+
+	measure 'Revenue PY' = CALCULATE([Revenue], SAMEPERIODLASTYEAR(DimDate[Date]))
+		formatString: #,0.00
+		displayFolder: 04 Time intelligence
+		lineageTag: ba04ceda-d9d6-4aca-a343-bb193fdddd43
+
+	measure 'Revenue YoY %' = DIVIDE([Revenue] - [Revenue PY], [Revenue PY])
+		formatString: 0.00%
+		displayFolder: 04 Time intelligence
+		lineageTag: c2d5b951-2868-4805-a5a0-ae98a8ac0831
+
+	measure 'Gross Profit PY' = CALCULATE([Gross Profit], SAMEPERIODLASTYEAR(DimDate[Date]))
+		formatString: #,0.00
+		displayFolder: 04 Time intelligence
+		lineageTag: 008f32f1-5e4c-4824-bb65-668cfc251ae2
+
+	measure 'Margin PY' = CALCULATE([Gross Margin %], SAMEPERIODLASTYEAR(DimDate[Date]))
+		formatString: 0.00%
+		displayFolder: 04 Time intelligence
+		lineageTag: 7773bb8c-db6c-4007-bbbe-2b503bdaee59
+
+	measure 'Margin Change (pp)' = ([Gross Margin %] - [Margin PY]) * 100
+		formatString: 0.00
+		displayFolder: 04 Time intelligence
+		lineageTag: 97dc787f-0389-4ad0-8412-a80eaeeff746
+
+	measure 'Selected Product' = IF(ISFILTERED(DimProduct[ProductName]), SELECTEDVALUE(DimProduct[ProductName], "Multiple products"), "All products")
+		formatString: General
+		displayFolder: 05 Context
+		lineageTag: 5628e357-6e2a-4cf2-8860-ca1b690232f0
+
+	measure 'Selected Customer' = IF(ISFILTERED(DimCustomer[CustomerName]), SELECTEDVALUE(DimCustomer[CustomerName], "Multiple customers"), "All customers")
+		formatString: General
+		displayFolder: 05 Context
+		lineageTag: 7299eb3d-051b-4a18-8a96-319827b195f9
+
+	measure 'Last Refresh (UTC)' = FORMAT(UTCNOW(), "yyyy-mm-dd HH:mm") & " UTC"
+		formatString: General
+		displayFolder: 05 Context
+		lineageTag: 89088a21-0c49-462f-8d34-99ec57c919c0
+
+	measure 'Data Through' = FORMAT(MAX(FactInternetSales[OrderDate]), "yyyy-mm-dd")
+		formatString: General
+		displayFolder: 05 Context
+		lineageTag: 9c075285-90f0-4330-8752-204990b49fc3
+
+	measure Countries = COUNTROWS(SUMMARIZE(FactInternetSales, DimCustomer[Customer Country]))
+		formatString: #,0
+		displayFolder: 06 Geography
+		lineageTag: 699d1a9f-c5ba-4e52-b8a7-2cefd79270e1
+
+	measure Territories = DISTINCTCOUNT(FactInternetSales[SalesTerritoryKey])
+		formatString: #,0
+		displayFolder: 06 Geography
+		lineageTag: 663aaab1-61c0-44b8-8268-515cc6846a2c
+
+	measure 'Territory Groups' = COUNTROWS(SUMMARIZE(FactInternetSales, DimSalesTerritory[TerritoryGroup]))
+		formatString: #,0
+		displayFolder: 06 Geography
+		lineageTag: 4fd181c2-2fb8-4ed1-87f2-352ab73244cc
+
+	measure 'KPI Revenue' = VAR v = [Revenue] VAR a = ABS(v) RETURN "$" & SWITCH(TRUE(), a >= 1000000000, FORMAT(v / 1000000000, "0.00") & "B", a >= 1000000, FORMAT(v / 1000000, "0.00") & "M", a >= 1000, FORMAT(v / 1000, "0.0") & "K", FORMAT(ROUND(v, 0), "#,##0"))
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 769c1e44-a28a-435f-bb57-b6252a5a6e07
+
+	measure 'KPI Gross Profit' = VAR v = [Gross Profit] VAR a = ABS(v) RETURN "$" & SWITCH(TRUE(), a >= 1000000000, FORMAT(v / 1000000000, "0.00") & "B", a >= 1000000, FORMAT(v / 1000000, "0.00") & "M", a >= 1000, FORMAT(v / 1000, "0.0") & "K", FORMAT(ROUND(v, 0), "#,##0"))
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: c2bd1e77-2941-49a0-b826-5c21e4ac2b65
+
+	measure 'KPI Freight Cost' = VAR v = [Freight Cost] VAR a = ABS(v) RETURN "$" & SWITCH(TRUE(), a >= 1000000000, FORMAT(v / 1000000000, "0.00") & "B", a >= 1000000, FORMAT(v / 1000000, "0.00") & "M", a >= 1000, FORMAT(v / 1000, "0.0") & "K", FORMAT(ROUND(v, 0), "#,##0"))
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 88c0a618-f56a-4f13-8cd0-71fa47fd88a9
+
+	measure 'KPI Revenue per Customer' = VAR v = [Revenue per Customer] VAR a = ABS(v) RETURN "$" & SWITCH(TRUE(), a >= 1000000000, FORMAT(v / 1000000000, "0.00") & "B", a >= 1000000, FORMAT(v / 1000000, "0.00") & "M", a >= 1000, FORMAT(v / 1000, "0.0") & "K", FORMAT(ROUND(v, 0), "#,##0"))
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 9c8adf7c-f8f8-4c78-81db-6cf6a4d3f1fc
+
+	measure 'KPI Gross Profit per Customer' = VAR v = DIVIDE([Gross Profit], [Customers]) VAR a = ABS(v) RETURN "$" & SWITCH(TRUE(), a >= 1000000000, FORMAT(v / 1000000000, "0.00") & "B", a >= 1000000, FORMAT(v / 1000000, "0.00") & "M", a >= 1000, FORMAT(v / 1000, "0.0") & "K", FORMAT(ROUND(v, 0), "#,##0"))
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 4413caf2-7713-432f-bada-43e22b2c5029
+
+	measure 'KPI AOV' = VAR v = [AOV] VAR a = ABS(v) RETURN "$" & SWITCH(TRUE(), a >= 1000000000, FORMAT(v / 1000000000, "0.00") & "B", a >= 1000000, FORMAT(v / 1000000, "0.00") & "M", a >= 1000, FORMAT(v / 1000, "0.0") & "K", FORMAT(ROUND(v, 0), "#,##0"))
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 8d669e67-5a57-49f1-81d3-a4715bb222b1
+
+	measure 'KPI Gross Margin' = FORMAT([Gross Margin %], "0.00%")
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 85cd2225-607a-476e-879a-95f26a42f5c6
+
+	measure 'KPI Repeat Rate' = FORMAT([Repeat Rate], "0.00%")
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 67113f87-2025-496a-8b90-e20173910c21
+
+	measure 'KPI Late Line Rate' = FORMAT([Late Line Rate], "0.00%")
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 6a10ed4b-a913-42a3-bc71-47540ca62241
+
+	measure 'KPI Orders' = FORMAT([Orders], "#,##0")
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 0ee181e2-b713-410d-be5b-563109edcbd4
+
+	measure 'KPI Customers' = FORMAT([Customers], "#,##0")
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 11e2ffeb-e26e-4dd3-a154-2f1450eb7057
+
+	measure 'KPI Territories' = FORMAT([Territories], "#,##0")
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 6d84a3fd-451b-4679-9052-17a3e1579e6e
+
+	measure 'KPI Lines' = FORMAT([Lines], "#,##0")
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 3a249411-1fe8-44f9-be5b-8299f9bfd2f0
+
+	measure 'KPI Units' = FORMAT([Units], "#,##0")
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 2543cc37-9fe5-4e22-b829-796966952722
+
+	measure 'KPI Orders per Customer' = FORMAT([Orders per Customer], "0.00")
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: 438b67a8-0505-46a1-9919-4e7740202d01
+
+	measure 'KPI Avg Lead' = FORMAT([Avg Lead Days], "0.00") & " d"
+		formatString: General
+		displayFolder: 08 KPI values
+		lineageTag: be98fb4e-42d5-4aa6-a908-3f0c599e922d
+
+	measure 'Sub Overview Revenue' = FORMAT([Units], "#,##0") & " units · " & FORMAT([Orders], "#,##0") & " orders"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 355f62e2-d978-4e7d-9ce4-5ad06540c5f3
+
+	measure 'Sub Overview Gross Profit' = "Margin " & FORMAT([Gross Margin %], "0.00%")
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 8e4bc0d4-c710-435d-90b9-6064d267acd5
+
+	measure 'Sub Overview Gross Margin' = "Profit ÷ revenue, per-unit × quantity"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: fd73cb08-cca4-4e0b-99f4-2c257cb375ea
+
+	measure 'Sub Overview Orders' = "AOV " & [KPI AOV]
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 82a1dec5-bcb0-4672-a410-785cdb74a348
+
+	measure 'Sub Profitability Gross Profit' = "Margin " & FORMAT([Gross Margin %], "0.00%") & " · " & FORMAT([Units], "#,##0") & " units"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 528375f9-ec23-4c8d-bf81-58ea82ffc2bf
+
+	measure 'Sub Profitability Gross Margin' = "(Unit price - unit cost) × quantity"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: de80ab04-64a7-4a84-bcb7-e8d84ca99323
+
+	measure 'Sub Profitability Revenue' = FORMAT([Lines], "#,##0") & " order lines"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 191dbb66-b8b1-425f-99bd-98a81ce46a6e
+
+	measure 'Sub Profitability Freight' = FORMAT([Freight % of Revenue], "0.00%") & " of revenue"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 115da017-85b7-4394-9418-b88b49fba645
+
+	measure 'Sub Customers Customers' = FORMAT([Customers], "#,##0") & " distinct buyers · " & FORMAT([Orders], "#,##0") & " orders"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: e5792d86-c32f-49a6-b1ba-e262af42cd72
+
+	measure 'Sub Customers Repeat Rate' = FORMAT([Repeat Customers], "#,##0") & " customers with 2+ orders"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 673723a8-c7c6-4c97-acda-32cca13c9899
+
+	measure 'Sub Customers Revenue per Customer' = [KPI Gross Profit per Customer] & " profit per customer"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 7179da45-28b5-4ce6-b559-18b4f9f3a586
+
+	measure 'Sub Customers Orders per Customer' = "AOV " & [KPI AOV]
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: f45b0df5-66d8-4f0b-9950-1f9c69650e0b
+
+	measure 'Sub Geography Revenue' = FORMAT([Lines], "#,##0") & " lines across " & FORMAT([Countries], "#,##0") & " countries"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: cc03ed78-b49d-4960-88fa-5fd9986c49f8
+
+	measure 'Sub Geography Gross Margin' = [KPI Gross Profit] & " gross profit"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: cfa23413-0774-4062-8c33-a34fea9f9b3c
+
+	measure 'Sub Geography Territories' = FORMAT([Territory Groups], "#,##0") & " territory groups"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 566f3530-4ad6-413e-8f35-e5c57489ce5f
+
+	measure 'Sub Geography Orders' = "AOV " & [KPI AOV]
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: f6ef4916-d98c-4dce-99a3-cdd9ce752872
+
+	measure 'Sub Detail Lines' = "Grain: order number + line number"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 47a25699-a87b-4913-b723-8c89efe94dde
+
+	measure 'Sub Detail Units' = "Sum of OrderQuantity"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: e47c2556-f763-46e8-b7bb-9f9787873853
+
+	measure 'Sub Detail Avg Lead' = "Order date → ship date"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 735412ff-0f90-48d0-8c6b-a19172180c28
+
+	measure 'Sub Detail Late' = FORMAT([Late Lines], "#,##0") & " lines shipped after due date"
+		formatString: General
+		displayFolder: 07 KPI sub-lines
+		lineageTag: 1ffdefca-4b04-4858-aa28-489909e40af0
+
+	column OrderDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: bef11b15-5558-4ec2-a3d8-9c5c80fba1ed
+		summarizeBy: none
+		sourceColumn: OrderDate
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column OrderYear
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 82f21aef-8bdc-4abc-b25b-05f72e236c03
+		summarizeBy: none
+		sourceColumn: OrderYear
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b229cd84-2906-49ad-9472-247f9b8acafd
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+	column CustomerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e087aa04-89a2-4972-92b4-0a344dc1ab2f
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+	column SalesTerritoryKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: aed650ed-f65b-4821-94cc-d9f6cb141a54
+		summarizeBy: none
+		sourceColumn: SalesTerritoryKey
+
+	column SalesOrderNumber
+		dataType: string
+		lineageTag: 012e3f3d-46da-4868-b62f-03a03661fc73
+		summarizeBy: none
+		sourceColumn: SalesOrderNumber
+
+	column SalesOrderLineNumber
+		dataType: int64
+		formatString: 0
+		lineageTag: 1de742b0-378b-4cb0-8848-e6026a8be171
+		summarizeBy: none
+		sourceColumn: SalesOrderLineNumber
+
+	column OrderQuantity
+		dataType: int64
+		formatString: #,0
+		lineageTag: aa104f01-67d1-4359-9ad6-1846ac413c53
+		summarizeBy: none
+		sourceColumn: OrderQuantity
+
+	column UnitPrice
+		dataType: double
+		isHidden
+		formatString: #,0.0000
+		lineageTag: ad89a5e7-0141-4835-9258-b287a725148c
+		summarizeBy: none
+		sourceColumn: UnitPrice
+
+	column UnitCost
+		dataType: double
+		isHidden
+		formatString: #,0.0000
+		lineageTag: 11ac87ba-61f4-4070-b27a-d40e63de67bf
+		summarizeBy: none
+		sourceColumn: UnitCost
+
+	column LineRevenue
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 3e5a4bce-6630-44ab-914c-8f34fd98fe1f
+		summarizeBy: none
+		sourceColumn: LineRevenue
+
+	column LineProfit
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 3d6ad524-0d76-4872-a451-e65a165eda35
+		summarizeBy: none
+		sourceColumn: LineProfit
+
+	column LineFreight
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 4885d9e2-d695-47b0-b033-e318850d0d73
+		summarizeBy: none
+		sourceColumn: LineFreight
+
+	column LeadDays
+		dataType: int64
+		formatString: 0
+		lineageTag: bc6e5cff-aee4-4184-905c-481bacc6a965
+		summarizeBy: none
+		sourceColumn: LeadDays
+
+	column LateDays
+		dataType: int64
+		formatString: 0
+		lineageTag: 74b9004d-a89f-4950-8ee6-e4c838f44366
+		summarizeBy: none
+		sourceColumn: LateDays
+
+	column LeadBucket
+		dataType: string
+		lineageTag: aac0ffb8-7cf2-4456-917a-5b8aaa19cf9a
+		summarizeBy: none
+		sourceColumn: LeadBucket
+
+	partition FactInternetSales = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\PATH_TO_REPO\powerbi\model_data\FactInternetSalesModel.csv"), [Delimiter = ",", Columns = 16, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"OrderDate", type date}, {"OrderYear", Int64.Type}, {"ProductKey", Int64.Type}, {"CustomerKey", Int64.Type}, {"SalesTerritoryKey", Int64.Type}, {"SalesOrderNumber", type text}, {"SalesOrderLineNumber", Int64.Type}, {"OrderQuantity", Int64.Type}, {"UnitPrice", type number}, {"UnitCost", type number}, {"LineRevenue", type number}, {"LineProfit", type number}, {"LineFreight", type number}, {"LeadDays", Int64.Type}, {"LateDays", Int64.Type}, {"LeadBucket", type text}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

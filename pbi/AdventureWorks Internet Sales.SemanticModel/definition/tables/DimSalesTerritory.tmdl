@@ -1,0 +1,42 @@
+table DimSalesTerritory
+	lineageTag: 065afb3d-5fce-4932-9a9f-1019a4f3d032
+
+	column SalesTerritoryKey
+		dataType: int64
+		isHidden
+		isKey
+		formatString: 0
+		lineageTag: 215711ef-54a5-4274-9925-4eb92902d852
+		summarizeBy: none
+		sourceColumn: SalesTerritoryKey
+
+	column TerritoryRegion
+		dataType: string
+		lineageTag: ece6043e-53aa-4712-8ae1-2124bbe9bd2d
+		summarizeBy: none
+		sourceColumn: Region
+
+	column TerritoryCountry
+		dataType: string
+		lineageTag: 3835449e-64d3-4292-818c-6f4201509284
+		summarizeBy: none
+		sourceColumn: Country
+
+	column TerritoryGroup
+		dataType: string
+		lineageTag: 8872cf22-3761-49d8-8e01-6ceae3b6f127
+		summarizeBy: none
+		sourceColumn: TerritoryGroup
+
+	partition DimSalesTerritory = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\PATH_TO_REPO\powerbi\model_data\DimSalesTerritoryModel.csv"), [Delimiter = ",", Columns = 4, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"SalesTerritoryKey", Int64.Type}, {"Region", type text}, {"Country", type text}, {"TerritoryGroup", type text}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,46 @@
+table 'Period Preset'
+	lineageTag: a932f34e-e05d-4ea9-bdee-d560dd82bf05
+
+	column Preset
+		dataType: string
+		lineageTag: 8662e056-cd59-41da-8e98-0a4009f2f5c8
+		summarizeBy: none
+		sourceColumn: Preset
+		sortByColumn: PresetOrder
+
+	column PresetOrder
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 2791d51d-dba5-4412-a2d0-ee1d24815739
+		summarizeBy: none
+		sourceColumn: PresetOrder
+
+	column Date
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: 1aef54eb-bedb-4ab3-9fc5-deec830005f2
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'Period Preset' = m
+		mode: import
+		source =
+				let
+				    StartDate = #date(2021, 1, 1),
+				    EndDate = #date(2022, 12, 31),
+				    DayCount = Duration.Days(EndDate - StartDate) + 1,
+				    DateList = List.Dates(StartDate, DayCount, #duration(1, 0, 0, 0)),
+				    AllDates = List.Transform(DateList, each [Preset = "All", PresetOrder = 0, Date = _]),
+				    YearDates = List.Transform(DateList, each [Preset = Text.From(Date.Year(_)), PresetOrder = Date.Year(_) - 2020, Date = _]),
+				    HalfDates = List.Transform(List.Select(DateList, each Date.Year(_) = 2022 and Date.Month(_) >= 7), each [Preset = "H2 2022", PresetOrder = 3, Date = _]),
+				    Combined = Table.FromRecords(AllDates & YearDates & HalfDates),
+				    Typed = Table.TransformColumnTypes(Combined, {{"Preset", type text}, {"PresetOrder", Int64.Type}, {"Date", type date}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

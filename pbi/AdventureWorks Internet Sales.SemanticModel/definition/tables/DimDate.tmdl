@@ -1,0 +1,121 @@
+table DimDate
+	lineageTag: 8541667b-baa7-497e-ac1e-2bd2e796a284
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: yyyy-mm-dd
+		lineageTag: af5cdca3-bfaf-4638-a6cd-c99e5c71e6ac
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: b26459be-2608-4fb6-9f76-853205c194ec
+		summarizeBy: none
+		sourceColumn: Year
+
+	column Quarter
+		dataType: string
+		lineageTag: 0819b735-a91d-43dd-bbac-843cef012a00
+		summarizeBy: none
+		sourceColumn: Quarter
+
+	column QuarterNumber
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6441c67e-b425-4073-8d0b-8c3f173fc932
+		summarizeBy: none
+		sourceColumn: QuarterNumber
+
+	column Month
+		dataType: string
+		lineageTag: 3ea1230b-e53f-4fbf-8879-6fb05969f88c
+		summarizeBy: none
+		sourceColumn: Month
+		sortByColumn: MonthNumber
+
+	column MonthNumber
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 8d0fde65-41cc-4733-bd07-4cb4b947acc6
+		summarizeBy: none
+		sourceColumn: MonthNumber
+
+	column MonthKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 569dd1c3-9597-405b-9532-4fd65f1c1209
+		summarizeBy: none
+		sourceColumn: MonthKey
+
+	column MonthYear
+		dataType: string
+		lineageTag: 69abc710-fd3b-4793-8828-4a644205e82a
+		summarizeBy: none
+		sourceColumn: MonthYear
+		sortByColumn: MonthKey
+
+	column YearMonth
+		dataType: string
+		isHidden
+		lineageTag: 10217241-d3d5-4fa1-9968-6c1ed5d58c4c
+		summarizeBy: none
+		sourceColumn: YearMonth
+		sortByColumn: MonthKey
+
+	column DayOfWeek
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e94afa85-034e-4382-928a-48d5e765eeec
+		summarizeBy: none
+		sourceColumn: DayOfWeek
+
+	column DayName
+		dataType: string
+		lineageTag: 97ae21b1-6167-4d32-84c8-0c3e8b45b2d6
+		summarizeBy: none
+		sourceColumn: DayName
+		sortByColumn: DayOfWeek
+
+	column IsWeekend
+		dataType: boolean
+		isHidden
+		lineageTag: 1e01c692-8110-4977-b55c-21ba4df26dc6
+		summarizeBy: none
+		sourceColumn: IsWeekend
+
+	partition DimDate = m
+		mode: import
+		source =
+				let
+				    StartDate = #date(2021, 1, 1),
+				    EndDate = #date(2022, 12, 31),
+				    DayCount = Duration.Days(EndDate - StartDate) + 1,
+				    DateList = List.Dates(StartDate, DayCount, #duration(1, 0, 0, 0)),
+				    DateTable = Table.FromList(DateList, Splitter.SplitByNothing(), {"Date"}, null, ExtraValues.Error),
+				    TypedDate = Table.TransformColumnTypes(DateTable, {{"Date", type date}}),
+				    AddedYear = Table.AddColumn(TypedDate, "Year", each Date.Year([Date]), Int64.Type),
+				    AddedQuarterNumber = Table.AddColumn(AddedYear, "QuarterNumber", each Date.QuarterOfYear([Date]), Int64.Type),
+				    AddedQuarter = Table.AddColumn(AddedQuarterNumber, "Quarter", each "Q" & Text.From(Date.QuarterOfYear([Date])), type text),
+				    AddedMonthNumber = Table.AddColumn(AddedQuarter, "MonthNumber", each Date.Month([Date]), Int64.Type),
+				    AddedMonth = Table.AddColumn(AddedMonthNumber, "Month", each Date.ToText([Date], "MMM"), type text),
+				    AddedMonthKey = Table.AddColumn(AddedMonth, "MonthKey", each Date.Year([Date]) * 100 + Date.Month([Date]), Int64.Type),
+				    AddedMonthYear = Table.AddColumn(AddedMonthKey, "MonthYear", each Date.ToText([Date], "MMM yyyy"), type text),
+				    AddedYearMonth = Table.AddColumn(AddedMonthYear, "YearMonth", each Date.ToText([Date], "yyyy-MM"), type text),
+				    AddedDayOfWeek = Table.AddColumn(AddedYearMonth, "DayOfWeek", each Date.DayOfWeek([Date], Day.Monday) + 1, Int64.Type),
+				    AddedDayName = Table.AddColumn(AddedDayOfWeek, "DayName", each Date.ToText([Date], "ddd"), type text),
+				    AddedIsWeekend = Table.AddColumn(AddedDayName, "IsWeekend", each Date.DayOfWeek([Date], Day.Monday) >= 5, type logical)
+				in
+				    AddedIsWeekend
+
+	annotation PBI_ResultType = Table
+

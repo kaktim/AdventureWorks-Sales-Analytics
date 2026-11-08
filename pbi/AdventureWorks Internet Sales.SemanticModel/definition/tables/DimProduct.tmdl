@@ -1,0 +1,91 @@
+table DimProduct
+	lineageTag: a091e3ea-4b20-4ec1-917b-6fa301e4de7d
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		isKey
+		formatString: 0
+		lineageTag: 7473a256-2a27-4ca1-a95f-76c8fef62431
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+	column ProductAlternateKey
+		dataType: string
+		isHidden
+		lineageTag: a09885b5-bc6d-485b-bf22-56dde9fe5aff
+		summarizeBy: none
+		sourceColumn: ProductAlternateKey
+
+	column ProductName
+		dataType: string
+		lineageTag: 97f33365-9687-4677-a0f4-49306c09fa0c
+		summarizeBy: none
+		sourceColumn: ProductName
+
+	column ProductLine
+		dataType: string
+		lineageTag: 2a75cc35-1206-4c17-b009-095d87acd332
+		summarizeBy: none
+		sourceColumn: ProductLine
+
+	column ModelName
+		dataType: string
+		lineageTag: 0091307b-d527-4cad-9746-a73f1541b418
+		summarizeBy: none
+		sourceColumn: ModelName
+
+	column Color
+		dataType: string
+		lineageTag: c5e242b7-7b83-4b78-83fc-ba6b0cfbf7c1
+		summarizeBy: none
+		sourceColumn: Color
+
+	column Size
+		dataType: string
+		lineageTag: 38c0bb68-6df2-4ebf-a4fd-f35abe65325c
+		summarizeBy: none
+		sourceColumn: Size
+
+	column SubcategoryKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a6e61f8d-d071-4b33-890e-2d91d5c5dc34
+		summarizeBy: none
+		sourceColumn: SubcategoryKey
+
+	column StandardCost
+		dataType: double
+		isHidden
+		formatString: #,0.0000
+		lineageTag: 99ee7703-7ac0-4c89-9045-2b8f6d2665ad
+		summarizeBy: none
+		sourceColumn: StandardCost
+
+	column ListPrice
+		dataType: double
+		isHidden
+		formatString: #,0.0000
+		lineageTag: 861079fb-4ff3-40d8-9139-030061dddca6
+		summarizeBy: none
+		sourceColumn: ListPrice
+
+	column SellerTier
+		dataType: string
+		lineageTag: 0630b176-9ea7-4858-a4c8-a9ccbe820fce
+		summarizeBy: none
+		sourceColumn: SellerTier
+
+	partition DimProduct = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\PATH_TO_REPO\powerbi\model_data\DimProductModel.csv"), [Delimiter = ",", Columns = 11, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"ProductKey", Int64.Type}, {"ProductAlternateKey", type text}, {"ProductName", type text}, {"ProductLine", type text}, {"ModelName", type text}, {"Color", type text}, {"Size", type text}, {"SubcategoryKey", Int64.Type}, {"StandardCost", type number}, {"ListPrice", type number}, {"SellerTier", type text}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,25 @@
+relationship FactInternetSales_DimDate
+	fromColumn: FactInternetSales.OrderDate
+	toColumn: DimDate.Date
+
+relationship FactInternetSales_DimProduct
+	fromColumn: FactInternetSales.ProductKey
+	toColumn: DimProduct.ProductKey
+
+relationship FactInternetSales_DimCustomer
+	fromColumn: FactInternetSales.CustomerKey
+	toColumn: DimCustomer.CustomerKey
+
+relationship FactInternetSales_DimTerritory
+	fromColumn: FactInternetSales.SalesTerritoryKey
+	toColumn: DimSalesTerritory.SalesTerritoryKey
+
+relationship DimCustomer_DimGeography
+	fromColumn: DimCustomer.GeographyKey
+	toColumn: DimGeography.GeographyKey
+
+relationship PeriodPreset_DimDate
+	crossFilteringBehavior: bothDirections
+	fromColumn: 'Period Preset'.Date
+	toColumn: DimDate.Date
+

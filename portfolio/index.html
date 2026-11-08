@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AdventureWorks Sales Analytics Portfolio Project</title>
+<style>
+  :root{
+    --navy:#0b2540;
+    --navy-2:#12395c;
+    --gold:#c9a227;
+    --teal:#1c7c6d;
+    --coral:#bf5340;
+    --ink:#1a232c;
+    --muted:#5f6f7e;
+    --line:#dfe5eb;
+    --soft:#f5f8fa;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    font-size:10.1pt;
+    line-height:1.5;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  p{margin:0 0 2.6mm}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:400;margin:0;color:var(--navy)}
+  h2{font-size:23pt;line-height:1.12;letter-spacing:-.2pt}
+  h3{font-size:11.6pt;line-height:1.25}
+  strong{font-weight:600}
+
+  .page{
+    position:relative;
+    width:297mm;height:210mm;
+    padding:11mm 15mm 9mm;
+    overflow:hidden;
+    page-break-after:always;
+    break-after:page;
+    background:#fff;
+  }
+  .page:last-of-type{page-break-after:auto;break-after:auto}
+
+  /* ---------- running head ---------- */
+  .runhead{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-size:7.4pt;letter-spacing:.17em;text-transform:uppercase;
+    color:#8b99a7;border-bottom:.6pt solid var(--line);
+    padding-bottom:2.2mm;margin-bottom:5.2mm;
+  }
+  .runhead b{font-weight:600;color:var(--navy);letter-spacing:.14em}
+
+  .eyebrow{
+    font-size:7.4pt;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin-bottom:1.6mm;
+  }
+  .lead{font-size:11.4pt;color:#3d4c5a;line-height:1.5}
+
+  .cols{display:flex;gap:9mm}
+  .col{flex:1;min-width:0}
+
+  /* ---------- cover ---------- */
+  .cover{
+    padding:0;background:
+      radial-gradient(120% 90% at 88% 8%, #1b4a72 0%, rgba(27,74,114,0) 55%),
+      linear-gradient(160deg,#0a2138 0%,#0b2540 48%,#081a2c 100%);
+    color:#eef3f7;
+  }
+  .cover-inner{
+    position:absolute;inset:9mm;
+    border:.7pt solid rgba(201,162,39,.42);
+    padding:15mm 16mm 12mm;
+    display:flex;flex-direction:column;
+  }
+  .cover .eyebrow{color:var(--gold);margin-bottom:5mm}
+  .cover h1{
+    color:#fff;font-size:40pt;line-height:1.06;letter-spacing:-.8pt;
+    margin:0 0 5mm;
+  }
+  .cover h1 em{font-style:normal;color:#d9c477}
+  .cover .lede{
+    font-size:12.2pt;line-height:1.55;color:#b9c9d8;max-width:196mm;margin:0;
+  }
+  .gold-rule{width:38mm;height:1.4pt;background:var(--gold);margin:7mm 0 6mm}
+  .cover-stats{display:flex;gap:0}
+  .cover-stats div{
+    padding-right:8mm;margin-right:8mm;border-right:.6pt solid rgba(255,255,255,.16);
+  }
+  .cover-stats div:last-child{border:0;margin-right:0;padding-right:0}
+  .cover-stats .v{
+    font-family:Georgia,serif;font-size:19pt;line-height:1.1;color:#fff;
+  }
+  .cover-stats .l{
+    font-size:6.9pt;letter-spacing:.16em;text-transform:uppercase;color:#8ba2b6;margin-top:1.2mm;
+  }
+  .cover-impact{
+    margin:6mm 0 auto;padding:0 0 0 5.5mm;border-left:1.6pt solid var(--gold);
+    font-family:Georgia,serif;font-size:10.6pt;line-height:1.4;color:#e9dcb2;
+  }
+  .cover-foot{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    border-top:.6pt solid rgba(255,255,255,.16);padding-top:5mm;
+    font-size:8.2pt;color:#93a9bc;
+  }
+  .cover-contents{
+    margin-top:8mm;max-width:206mm;font-size:9.3pt;line-height:1.65;color:#93a9bc;
+  }
+  .cover-contents span{
+    display:block;font-size:6.9pt;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin-bottom:1.6mm;
+  }
+  .cover-tools{
+    margin-top:5mm;font-size:8.9pt;color:#93a9bc;line-height:1.5;
+  }
+  .cover-tools span{
+    display:block;font-size:6.9pt;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin-bottom:1.4mm;
+  }
+  .cover-foot div{max-width:118mm}
+  .cover-foot .right{text-align:right}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;font-size:8.9pt}
+  th{
+    text-align:left;font-size:6.9pt;letter-spacing:.14em;text-transform:uppercase;
+    color:#7b8b99;font-weight:600;padding:0 2mm 2mm 0;border-bottom:.7pt solid var(--navy);
+    vertical-align:bottom;
+  }
+  td{padding:1.55mm 2mm 1.55mm 0;border-bottom:.5pt solid var(--line);vertical-align:top}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;padding-right:0}
+  th.num{text-align:right;padding-right:0}
+  tr.total td{border-top:.7pt solid var(--navy);border-bottom:0;font-weight:600;padding-top:2mm}
+  .mono{font-family:Consolas,"Cascadia Mono",monospace;font-size:8.6pt}
+  .folders{display:flex;flex-wrap:wrap;gap:1.5mm;margin:0 0 3.6mm;padding-bottom:3mm;border-bottom:.6pt solid var(--line)}
+  .folders span{border:.6pt solid var(--line);border-radius:1mm;padding:.8mm 2.2mm;font-size:7.9pt;color:#465563;background:#fff;white-space:nowrap}
+  .folders b{color:var(--navy);font-weight:600;margin-right:1.4mm}
+  .folders i{font-style:normal;color:#a8871c;margin-left:1.4mm}
+  table.tight td{padding:1.15mm 2mm 1.15mm 0;font-size:8.5pt}
+  table.tight th{padding-bottom:1.6mm}
+  table.grid td.num{padding-right:6mm}
+  table.grid th.num{padding-right:6mm}
+
+  /* ---------- panels & callouts ---------- */
+  .panel{
+    background:var(--soft);border:.6pt solid var(--line);border-radius:2.2mm;
+    padding:5mm 5.5mm;
+  }
+  .panel h3{margin-bottom:2mm}
+  .panel p:last-child{margin-bottom:0}
+  .callout{
+    border-left:2.2pt solid var(--gold);background:#fbf8ee;
+    padding:4mm 5mm;border-radius:0 2mm 2mm 0;
+  }
+  .callout .tag{
+    font-size:6.9pt;letter-spacing:.16em;text-transform:uppercase;
+    color:#9a7a12;font-weight:700;margin-bottom:1.4mm;
+  }
+  .callout p{font-size:9.2pt;margin-bottom:0}
+  .callout.teal{border-left-color:var(--teal);background:#f1f8f6}
+  .callout.teal .tag{color:#13665a}
+
+  ul{margin:0;padding-left:4.2mm}
+  li{margin-bottom:1.8mm}
+  li::marker{color:var(--gold)}
+
+  .numbered{list-style:none;padding:0;counter-reset:q}
+  .numbered li{
+    counter-increment:q;position:relative;padding-left:8mm;margin-bottom:2.6mm;
+    font-size:9.4pt;
+  }
+  .numbered li::before{
+    content:counter(q,decimal-leading-zero);
+    position:absolute;left:0;top:.2mm;
+    font-family:Georgia,serif;font-size:9.6pt;color:var(--gold);
+  }
+
+  /* ---------- problem page ---------- */
+  .split{display:flex;gap:10mm}
+  .split .main{flex:1.32;min-width:0}
+  .split .side{flex:1;min-width:0}
+
+  .decision{display:flex;gap:4mm;margin-top:1mm}
+  .decision > div{
+    flex:1;border-top:1.6pt solid var(--navy);padding-top:2.6mm;
+  }
+  .decision .k{font-size:8.5pt;font-weight:700;color:var(--navy);margin-bottom:1mm}
+  .decision p{font-size:8.6pt;color:var(--muted);margin:0;line-height:1.42}
+
+  .rulebar{
+    display:flex;align-items:center;gap:5mm;
+    border-top:.6pt solid var(--line);padding-top:3.4mm;margin-top:5mm;
+    font-size:8.7pt;color:#465563;
+  }
+  .rulebar .badge{
+    flex:none;font-size:6.8pt;letter-spacing:.15em;text-transform:uppercase;
+    background:var(--navy);color:#fff;padding:1.2mm 2.6mm;border-radius:1mm;font-weight:700;
+  }
+
+  /* ---------- model page ---------- */
+  .rel{
+    display:flex;align-items:center;gap:3mm;
+    border:.6pt solid var(--line);border-radius:1.6mm;
+    padding:2.2mm 3mm;font-size:8.5pt;margin-bottom:1.8mm;background:#fff;
+  }
+  .rel .from{font-family:Consolas,monospace;font-size:8pt;color:var(--navy);white-space:nowrap}
+  .rel .to{font-family:Consolas,monospace;font-size:8pt;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rel .arrow{color:var(--gold);font-size:10pt;line-height:1}
+  .rel.bi{border-color:#bcd8d2;background:#f3f9f7}
+  .rel.bi .arrow{color:var(--teal)}
+  .rel .note{margin-left:auto;font-size:7.4pt;color:#8b99a7;white-space:nowrap}
+
+  .star{display:block;width:100%;height:auto;margin:.4mm 0 0}
+  .star-cap{margin:2.6mm 0 0;font-size:8pt;line-height:1.46;color:#65727f}
+  .star-cap b{color:var(--navy);font-weight:600}
+
+  .pill-list{display:flex;flex-wrap:wrap;gap:1.6mm;margin-top:2mm}
+  .pill-list span{
+    font-size:7.8pt;border:.6pt solid var(--line);border-radius:4mm;
+    padding:.9mm 2.6mm;background:#fff;color:#3d4c5a;
+  }
+
+  /* ---------- DAX page ---------- */
+  .code{
+    background:#0e2337;color:#e6edf4;border-radius:1.8mm;
+    padding:3.2mm 3.6mm;font-family:Consolas,"Cascadia Mono",monospace;
+    font-size:7.6pt;line-height:1.5;white-space:pre;overflow:hidden;
+  }
+  .code .cm{color:#7f97ad}
+  .code .fn{color:#e0c46a}
+  .code .st{color:#9fd4c4}
+  .code .nm{color:#8fbfe0}
+  .code .kw{color:#8fbfe0}
+  .codehead{
+    font-size:7.2pt;letter-spacing:.16em;text-transform:uppercase;
+    color:#7b8b99;font-weight:700;margin-bottom:1.4mm;
+  }
+  .codehead span{color:#b8a24a;letter-spacing:.06em;text-transform:none;font-weight:400;margin-left:2mm}
+
+  /* ---------- insight page ---------- */
+  .stats{display:flex;gap:4mm;margin-bottom:5mm}
+  .stat{
+    flex:1;border:.6pt solid var(--line);border-radius:2mm;padding:4mm 4.4mm;
+    border-top:2.2pt solid var(--navy);
+  }
+  .stat .v{font-family:Georgia,serif;font-size:20pt;line-height:1.05;color:var(--navy)}
+  .stat .l{font-size:7.2pt;letter-spacing:.14em;text-transform:uppercase;color:#8b99a7;margin:1.6mm 0 1.4mm}
+  .stat p{font-size:8.4pt;color:var(--muted);margin:0;line-height:1.4}
+  .stat.b2{border-top-color:var(--teal)}
+  .stat.b3{border-top-color:var(--gold)}
+  .stat.b4{border-top-color:var(--coral)}
+
+  .findings{display:flex;gap:9mm}
+  .findings .col{flex:1}
+  .finding{margin-bottom:3.2mm}
+  .finding .h{
+    font-family:Georgia,serif;font-size:10.6pt;color:var(--navy);margin-bottom:.6mm;
+  }
+  .finding p{font-size:8.9pt;color:#3d4c5a;margin:0;line-height:1.45}
+
+  /* ---------- screenshot pages ---------- */
+  .shot-head{display:flex;justify-content:space-between;align-items:flex-end;gap:10mm;margin-bottom:3.4mm}
+  .shot-head h2{font-size:21pt}
+  .shot-purpose{font-size:9pt;color:var(--muted);max-width:118mm;text-align:right;margin:0 0 1mm;line-height:1.45}
+  .frame{display:flex;justify-content:center}
+  .frame img{
+    display:block;width:100%;max-width:244mm;height:auto;
+    border:.7pt solid #cfd8e0;border-radius:1mm;
+  }
+  .notes{display:flex;gap:7mm;margin-top:3mm;border-top:.6pt solid var(--line);padding-top:2.6mm}
+  .notes div{flex:1}
+  .notes .n-label{
+    font-size:6.8pt;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin-bottom:1mm;
+  }
+  .notes p{font-size:8.6pt;color:#3d4c5a;margin:0;line-height:1.42}
+
+  /* ---------- validation page ---------- */
+  .lim{font-size:8.6pt}
+  .lim li{margin-bottom:1.5mm;line-height:1.42}
+  .next{display:flex;gap:4mm;margin-top:1mm}
+  .next div{
+    flex:1;background:var(--navy);color:#dce7f0;border-radius:1.6mm;
+    padding:3.8mm 4mm;font-size:8.5pt;line-height:1.45;
+  }
+  .next b{display:block;color:#fff;font-family:Georgia,serif;font-weight:400;font-size:9.8pt;margin-bottom:1.2mm}
+  .next span{display:block;margin-top:2mm;font-size:7.9pt;line-height:1.42;color:#8fb0c9}
+
+  .deliver{display:flex;gap:4mm}
+  .deliver > div{flex:1;border-top:1.6pt solid var(--gold);padding-top:2.8mm}
+  .deliver b{
+    display:block;font-family:Georgia,serif;font-weight:400;font-size:10.2pt;
+    color:var(--navy);margin-bottom:1.2mm;line-height:1.25;
+  }
+  .deliver p{font-size:8.7pt;line-height:1.45;color:#465563;margin:0}
+
+  .watch{
+    display:flex;gap:6.5mm;margin-top:5.4mm;padding-top:3.4mm;
+    border-top:.6pt solid var(--line);
+  }
+  .watch > div{flex:1;min-width:0}
+  .watch .n{
+    display:block;font-size:6.8pt;letter-spacing:.16em;color:var(--gold);
+    font-weight:700;margin-bottom:.8mm;
+  }
+  .watch h4{
+    font-family:Georgia,serif;font-weight:400;font-size:9.9pt;line-height:1.24;
+    color:var(--navy);margin:0 0 1.2mm;
+  }
+  .watch p{font-size:8.3pt;line-height:1.44;color:#465563;margin:0}
+
+  .closing{position:absolute;left:15mm;right:15mm;bottom:11mm}
+  .closing .rule{width:42mm;height:1.2pt;background:var(--gold);margin-bottom:4.4mm}
+  .closing .big{
+    font-family:Georgia,serif;font-size:14.5pt;line-height:1.35;color:var(--navy);
+    margin:0 0 3.2mm;max-width:206mm;
+  }
+  .closing .meta{font-size:7.4pt;letter-spacing:.16em;text-transform:uppercase;color:#8b99a7}
+
+  /* ---------- impact / skills ---------- */
+  .impact{display:flex;gap:4mm}
+  .impact > div{
+    flex:1;border:.6pt solid var(--line);border-left:2.2pt solid var(--gold);
+    border-radius:0 1.8mm 1.8mm 0;padding:3.8mm 4.2mm;background:#fff;
+  }
+  .impact h4{
+    font-family:Georgia,serif;font-weight:400;font-size:10.3pt;line-height:1.24;
+    color:var(--navy);margin:0 0 1.6mm;
+  }
+  .impact p{font-size:8.5pt;line-height:1.43;color:#465563;margin:0}
+
+  .strip{
+    display:flex;gap:6mm;align-items:baseline;
+    border-top:.6pt solid var(--line);padding-top:3.6mm;margin-top:5mm;
+    font-size:8.4pt;color:#465563;line-height:1.45;
+  }
+  .strip b{
+    flex:none;font-family:Georgia,serif;font-size:9.6pt;font-weight:400;color:var(--navy);
+    white-space:nowrap;margin-right:2.6mm;
+  }
+
+  .skills{display:flex;gap:8mm}
+  .skills > div{flex:1;min-width:0}
+  .skills h3{
+    font-size:11pt;margin:0 0 1.8mm;padding-bottom:1.6mm;
+    border-bottom:1.6pt solid var(--navy);
+  }
+  .skills ul{padding-left:4mm;margin:0}
+  .skills li{font-size:8.8pt;line-height:1.44;margin-bottom:2.1mm;color:#3d4c5a}
+  .skills li b{color:var(--navy);font-weight:600}
+  .skills li .mono{font-size:8.2pt}
+  .tools{
+    margin-top:4.6mm;border:.6pt solid var(--line);background:var(--soft);
+    border-radius:1.8mm;padding:3.4mm 4.2mm;font-size:8.5pt;color:#465563;line-height:1.5;
+  }
+  .tools span{
+    font-size:6.9pt;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--navy);font-weight:700;margin-right:2mm;
+  }
+
+  @media screen{
+    body{background:#e7ebef;padding:10mm 0}
+    .page{margin:0 auto 10mm;box-shadow:0 2px 14px rgba(15,35,55,.18)}
+  }
+  @page{size:A4 landscape;margin:0}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. COVER ============ -->
+<section class="page cover">
+  <div class="cover-inner">
+    <div class="eyebrow">Data analytics portfolio project &middot; November 2026</div>
+    <h1>AdventureWorks<br>Sales <em>Analytics</em></h1>
+    <p class="lede">
+      A five-page Power BI solution analyzing 60,398 sales transactions to identify revenue
+      drivers, profitability trends, customer behavior, and territory performance &mdash; while
+      maintaining full reconciliation to source data.
+    </p>
+    <div class="gold-rule"></div>
+    <div class="cover-stats">
+      <div><div class="v">$307.09M</div><div class="l">Revenue</div></div>
+      <div><div class="v">$126.29M</div><div class="l">Gross profit</div></div>
+      <div><div class="v">41.12%</div><div class="l">Gross margin</div></div>
+      <div><div class="v">27,659</div><div class="l">Orders</div></div>
+      <div><div class="v">18,484</div><div class="l">Customers</div></div>
+    </div>
+    <p class="cover-impact">
+      Identified the products, territories, and customers driving a $307M sales business while
+      maintaining 100% reconciliation to source data.
+    </p>
+    <div class="cover-contents">
+      <span>Report contents</span> Business problem &middot; data model and architecture &middot; five dashboard
+      pages &middot; key insights &middot; business impact &middot; technical skills &middot; validation and
+      reconciliation &middot; next steps.
+    </div>
+    <div class="cover-tools">
+      <span>Tools used</span> Power BI Desktop &middot; DAX &middot; Power Query &middot;
+      Azure SQL Database (reference integration) &middot; T-SQL example &middot; Data Modeling
+    </div>
+    <div class="cover-foot">
+      <div>
+        <strong style="color:#fff">Source</strong> &nbsp;AdventureWorksDW.xlsx &mdash; 6 tables, 60,398 fact rows<br>
+        <strong style="color:#fff">Model</strong> &nbsp;7 tables, 6 relationships, 65 DAX measures
+      </div>
+      <div class="right">
+        <strong style="color:#fff">Report</strong> &nbsp;AdventureWorks Sales.pbix, current Desktop version<br>
+        Five visible pages &middot; 60,398 order lines &middot; November 2026<br>
+        Azure SQL is documented as a deployment path, not a live PBIX connection.
+      </div>
+    </div>  </div>
+</section>
+
+<!-- ============ 2. BUSINESS PROBLEM ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>01</b> &nbsp;Business problem</span></div>
+
+  <h2>The business problem: a wholesaler that can price nothing<br>and see everything</h2>
+  <p class="lead" style="margin-top:3.4mm;max-width:238mm">
+    AdventureWorks sells bicycles, components and accessories to resellers in six countries.
+    Every order is already recorded, yet the commercial team cannot answer the questions that
+    decide next quarter: which product lines actually earn their margin, which territories are
+    carrying the business, and whether 18,484 customers are a durable base or a one-off spike.
+  </p>
+
+  <div class="split" style="margin-top:6mm">
+    <div class="main">
+      <h3 style="margin-bottom:2.4mm">Why the raw workbook cannot answer them</h3>
+      <p style="font-size:9.3pt">
+        The source is a single Excel workbook with one 60,398-row fact sheet and five dimensions. It is
+        accurate and complete, but it is a record, not an instrument: no relationships, no measures, no
+        calendar the facts agree with, and amounts stored <strong>per unit</strong> so that a plain
+        <span class="mono">SUM</span> of the sales column silently understates revenue.
+      </p>
+      <p style="font-size:9.3pt">
+        There is also no product hierarchy, no promotion or currency dimension, and no returns, budget
+        or quota data. The report therefore has to be explicit about what it can prove and what it
+        cannot &mdash; and it has to reconcile, to the cent, with the workbook it came from.
+      </p>
+
+      <div class="decision" style="margin-top:5mm">
+        <div>
+          <div class="k">Where the margin is</div>
+          <p>Rank product lines and products on profit, not revenue, so the 2% line with the best margin is visible.</p>
+        </div>
+        <div>
+          <div class="k">Where the demand is</div>
+          <p>Compare territory groups and countries on the same basis, without mixing two filter paths.</p>
+        </div>
+        <div>
+          <div class="k">Who the buyer is</div>
+          <p>Separate one-off buyers from repeat accounts and size the value of each customer relationship.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h3>Questions the report answers</h3>
+        <ol class="numbered" style="margin-top:2.6mm">
+          <li>What is revenue, gross profit and margin &mdash; and what is the order value behind them?</li>
+          <li>Which product line and which individual products produce the profit?</li>
+          <li>How concentrated is revenue across countries and territory groups?</li>
+          <li>How many buyers return, and what is a customer worth over their lifetime?</li>
+          <li>Does fulfilment meet its lead-time commitment, line by line?</li>
+          <li>Can any single figure be traced back to the exact order lines that produced it?</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="rulebar">
+    <span class="badge">Design rule</span>
+    <span><strong>Reconcile, don&rsquo;t approximate.</strong> Every page carries the calculation rule in its footer
+    &mdash; revenue is <span class="mono">SUMX(UnitPrice &times; OrderQuantity)</span> &mdash; and the Detail page totals
+    to the same $307,092,945.20 the KPI cards show.</span>
+  </div>
+</section>
+
+<!-- ============ 3. DATA SOURCE ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>02</b> &nbsp;Data model &amp; architecture</span></div>
+
+  <div class="shot-head" style="margin-bottom:4mm">
+    <div>
+      <div class="eyebrow">Data model &amp; architecture &middot; 1 of 3</div>
+      <h2>Source, grain and data quality</h2>
+    </div>
+    <p class="shot-purpose">
+      AdventureWorksDW.xlsx &mdash; a read-only extract of the AdventureWorks internet-sales schema.
+      All figures in this document were recomputed from it and cross-checked against the model and the
+      browser dashboard.
+    </p>
+  </div>
+
+  <table class="grid">
+    <thead>
+      <tr>
+        <th style="width:30%">Sheet</th>
+        <th class="num" style="width:11%">Rows</th>
+        <th class="num" style="width:9%">Cols</th>
+        <th>Role and key</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>FactInternetSales</strong> <span style="color:#8b99a7">(table <span class="mono">Table2</span>)</span></td><td class="num">60,398</td><td class="num">26</td><td>Grain: order number + line number (unique). Every key resolves to a dimension.</td></tr>
+      <tr><td>DimProduct</td><td class="num">606</td><td class="num">36</td><td><span class="mono">ProductKey</span> 1&ndash;606; only 158 products are ever sold.</td></tr>
+      <tr><td>DimCustomer</td><td class="num">18,484</td><td class="num">29</td><td><span class="mono">CustomerKey</span>; <span class="mono">GeographyKey</span> &rarr; DimGeography.</td></tr>
+      <tr><td>DimGeography</td><td class="num">655</td><td class="num">11</td><td><span class="mono">GeographyKey</span>; 336 are used by customers.</td></tr>
+      <tr><td>DimSalesTerritory</td><td class="num">11</td><td class="num">6</td><td><span class="mono">SalesTerritoryKey</span> 1&ndash;11; the fact uses 1&ndash;10.</td></tr>
+      <tr><td>DimDate</td><td class="num">2,191</td><td class="num">19</td><td>Daily calendar 2005-01-01 &rarr; 2010-12-31; <span class="mono">DateKey</span> = YYYYMMDD.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cols" style="margin-top:6mm">
+    <div class="col">
+      <div class="callout">
+        <div class="tag">Trap 1 &middot; amounts are per unit</div>
+        <p><span class="mono">SalesAmount</span>, <span class="mono">ExtendedAmount</span> and
+        <span class="mono">TotalProductCost</span> equal the <em>unit</em> price and unit cost on every row;
+        <span class="mono">OrderQuantity</span> (1&ndash;20) is not baked in. Tax is 8% and freight 2.5% of the
+        unit amount. A plain <span class="mono">SUM(SalesAmount)</span> would understate revenue by roughly an
+        order of magnitude, so every money measure multiplies by quantity.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="callout teal">
+        <div class="tag">Trap 2 &middot; two date timelines</div>
+        <p>The date <em>keys</em> (2005-07 &rarr; 2008-07) match DimDate. The date <em>columns</em> are re-based to
+        2021-01-01 &rarr; 2022-12-31 &mdash; 2021 holds the 2005+2006 rows (3,690 lines) and 2022 holds 2007+2008
+        (56,708). The report uses the 2021&ndash;2022 display timeline with its own calendar and never relates
+        the shifted columns to DimDate.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:5mm;padding:4mm 5mm">
+    <p style="font-size:8.8pt;margin:0;color:#465563">
+      <strong style="color:var(--navy)">What the workbook does not contain.</strong>
+      No product subcategory or category sheet (<span class="mono">ProductSubcategoryKey</span> 1&ndash;37 has
+      nothing to join to), no promotion or currency dimension (so no currency conversion is applied), and no
+      returns, refunds, budget or quota data. Those keys are dropped rather than given invented relationships,
+      and no figure in this report is modelled from them.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 4. PREPARATION & MODEL ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>02</b> &nbsp;Data model &amp; architecture</span></div>
+
+  <div class="shot-head" style="margin-bottom:4.4mm">
+    <div>
+      <div class="eyebrow">Data model &amp; architecture &middot; 2 of 3</div>
+      <h2>Relationships, calendar and filter architecture</h2>
+    </div>
+    <p class="shot-purpose">
+      Seven tables, six relationships, one marked date table, 65 measures in eight display folders.
+      The model is embedded in the .pbix, so the report opens with no refresh prompt.
+    </p>
+  </div>
+
+  <div class="cols">
+    <div class="col" style="flex:1.15">
+      <div class="codehead" style="margin-bottom:1.8mm">Star schema &mdash; one fact, five dimensions</div>
+      <svg class="star" viewBox="0 0 522 240" role="img"
+           aria-label="Star schema: FactInternetSales at the centre, joined one-to-many from DimProduct, DimCustomer, DimSalesTerritory and DimDate, with DimGeography snowflaking from DimCustomer and a bidirectional Period Preset bridge on DimDate">
+        <defs>
+          <marker id="sgA" viewBox="0 0 8 8" refX="7.2" refY="4" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+            <path d="M0 0 L8 4 L0 8 Z" fill="#93a3b5"/>
+          </marker>
+          <marker id="sgG" viewBox="0 0 8 8" refX="7.2" refY="4" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+            <path d="M0 0 L8 4 L0 8 Z" fill="#c9a227"/>
+          </marker>
+        </defs>
+
+        <g fill="none" stroke="#93a3b5" stroke-width="1.1">
+          <path d="M112 37 L188 104" marker-end="url(#sgA)"/>
+          <path d="M58 186 L58 141" marker-end="url(#sgA)"/>
+          <path d="M112 120 L188 120" marker-end="url(#sgA)"/>
+          <path d="M370 120 L304 120" marker-end="url(#sgA)"/>
+          <path d="M370 205 L304 141" marker-end="url(#sgA)"/>
+        </g>
+        <path d="M424 56 L424 99" fill="none" stroke="#c9a227" stroke-width="1.1"
+              stroke-dasharray="3 2.4" marker-start="url(#sgG)" marker-end="url(#sgG)"/>
+
+        <rect x="4" y="18" width="108" height="38" rx="3.5" fill="#fff" stroke="#ccd6e0" stroke-width=".9"/>
+        <text x="58" y="34" text-anchor="middle" font-family="Georgia, serif" font-size="10.3" fill="#0b2540">DimProduct</text>
+        <text x="58" y="47.6" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="7.2" fill="#78879a">606 rows &middot; ProductKey</text>
+
+        <rect x="4" y="101" width="108" height="38" rx="3.5" fill="#fff" stroke="#ccd6e0" stroke-width=".9"/>
+        <text x="58" y="117" text-anchor="middle" font-family="Georgia, serif" font-size="10.3" fill="#0b2540">DimCustomer</text>
+        <text x="58" y="130.6" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="7.2" fill="#78879a">18,484 rows &middot; CustomerKey</text>
+
+        <rect x="4" y="186" width="108" height="38" rx="3.5" fill="#fff" stroke="#ccd6e0" stroke-width=".9"/>
+        <text x="58" y="202" text-anchor="middle" font-family="Georgia, serif" font-size="10.3" fill="#0b2540">DimGeography</text>
+        <text x="58" y="215.6" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="7.2" fill="#78879a">655 rows &middot; GeographyKey</text>
+
+        <rect x="370" y="18" width="108" height="38" rx="3.5" fill="#fbf7e8" stroke="#d3bb6d" stroke-width=".9" stroke-dasharray="3 2"/>
+        <text x="424" y="34" text-anchor="middle" font-family="Georgia, serif" font-size="10.3" fill="#7a5f0e">Period Preset</text>
+        <text x="424" y="47.6" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="7.2" fill="#9c8842">1,644 rows &middot; bridge</text>
+
+        <rect x="370" y="101" width="108" height="38" rx="3.5" fill="#fff" stroke="#ccd6e0" stroke-width=".9"/>
+        <text x="424" y="117" text-anchor="middle" font-family="Georgia, serif" font-size="10.3" fill="#0b2540">DimDate</text>
+        <text x="424" y="130.6" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="7.2" fill="#78879a">2,191 days &middot; date table</text>
+
+        <rect x="370" y="186" width="108" height="38" rx="3.5" fill="#fff" stroke="#ccd6e0" stroke-width=".9"/>
+        <text x="424" y="200" text-anchor="middle" font-family="Georgia, serif" font-size="10.3" fill="#0b2540">DimSalesTerritory</text>
+        <text x="424" y="215.6" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="7.2" fill="#78879a">11 rows &middot; TerritoryKey</text>
+
+        <rect x="190" y="96" width="112" height="48" rx="4" fill="#0b2540"/>
+        <text x="246" y="118" text-anchor="middle" font-family="Georgia, serif" font-size="12.3" fill="#fff">FactInternetSales</text>
+        <text x="246" y="132" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="7.1" fill="#9db4c8">60,398 rows &middot; order + line</text>
+      </svg>
+      <p class="star-cap">
+        Six relationships. Four run dimension &rarr; fact on the matching key &mdash; Date &rarr; OrderDate,
+        plus ProductKey, CustomerKey and SalesTerritoryKey &mdash; so a slicer narrows the fact and never the
+        reverse. A fifth snowflakes DimGeography into DimCustomer; the sixth is the Period Preset bridge,
+        bidirectional only because DimDate sits on its many side. Territory never joins through
+        Customer &rarr; Geography, so it cannot be filtered two ways.
+      </p>
+
+      <div class="codehead" style="margin-top:5mm;margin-bottom:1.6mm">Extract and load</div>
+      <p style="font-size:8.7pt;margin-bottom:0">
+        The workbook is never written back to. A Python step reads it with stdlib XML streaming and writes
+        seven curated CSVs (fact plus five dimensions and the preset bridge); each table is loaded through an
+        M <span class="mono">File.Contents</span> partition, so the packaged report is self-contained.
+        Zero-length strings are normalised to null, all-null columns
+        (<span class="mono">CarrierTrackingNumber</span>, <span class="mono">CustomerPONumber</span>,
+        <span class="mono">LargePhoto</span>, <span class="mono">SalesTerritoryImage</span>) and the eight
+        duplicate-language description columns are dropped.
+      </p>
+    </div>
+
+    <div class="col">
+      <div class="codehead" style="margin-bottom:2mm">Date decision</div>
+      <p style="font-size:8.8pt">
+        <strong>The 2021&ndash;2022 display timeline is the reporting calendar.</strong> DimDate is rebuilt to run
+        2021-01-01 &rarr; 2022-12-31 and is marked as the date table; the raw YYYYMMDD keys are hidden. This keeps
+        every visual, the Period slicer and the time-intelligence measures on one timeline. Customer first-purchase
+        and product start/end dates stay unusable for time intelligence because they remain on the source timeline
+        &mdash; they are referenced but never used to slice.
+      </p>
+
+      <div class="codehead" style="margin-top:4.4mm;margin-bottom:2mm">Filter bar &mdash; web parity</div>
+      <p style="font-size:8.8pt;margin-bottom:2.4mm">
+        All five pages open with the same control strip above the KPI row. It is real, single-source filtering:
+        the period range and the preset intersect (AND), and the reset button is Desktop&rsquo;s native
+        <em>Clear all slicers</em>, so no bookmark state can drift.
+      </p>
+      <div class="pill-list">
+        <span>Period &mdash; date range</span>
+        <span>Preset &mdash; All / 2021 / 2022 / H2 2022</span>
+        <span>Country</span>
+        <span>Product line</span>
+        <span>Region</span>
+        <span>Gender</span>
+        <span>Income band</span>
+        <span>Lead-time band (Detail)</span>
+        <span>Reset filters</span>
+      </div>
+
+      <div class="callout" style="margin-top:4.4mm">
+        <div class="tag">Why a bridge table</div>
+        <p style="font-size:8.6pt">Calculation groups re-evaluate measures but never the rows a chart draws, so the
+        presets are a 1,644-row (preset, date) bridge. Its relationship to DimDate must stay bidirectional:
+        filter direction runs from the one side to the many side, and here the calendar is the many side &mdash;
+        one-directional, picking <em>2021</em> changed nothing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. DAX ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>02</b> &nbsp;Data model &amp; architecture</span></div>
+
+  <div class="shot-head" style="margin-bottom:3.2mm">
+    <div>
+      <div class="eyebrow">Data model &amp; architecture &middot; 3 of 3</div>
+      <h2>DAX measures</h2>
+    </div>
+    <p class="shot-purpose">
+      Measures live on the fact table and are grouped by intent, not by visual. The amount rule
+      &mdash; unit price and unit cost multiplied by quantity &mdash; is applied once, at the base.
+    </p>
+  </div>
+
+  <div class="folders">
+    <span><b>01 Core</b><i>8</i></span>
+    <span><b>02 Customers</b><i>5</i></span>
+    <span><b>03 Fulfillment</b><i>4</i></span>
+    <span><b>04 Time intelligence</b><i>5</i></span>
+    <span><b>05 Context</b><i>4</i></span>
+    <span><b>06 Geography</b><i>3</i></span>
+    <span><b>07 KPI sub-lines</b><i>20</i></span>
+    <span><b>08 KPI values</b><i>16</i></span>
+  </div>
+
+  <div class="cols" style="gap:5mm">
+    <div class="col">
+      <div class="codehead">Revenue <span>01 Core</span></div>
+      <div class="code" style="margin-bottom:3.4mm"><span class="nm">Revenue</span> =
+<span class="fn">SUMX</span> ( <span class="nm">FactInternetSales</span>,
+       <span class="nm">FactInternetSales</span>[UnitPrice]
+         * <span class="nm">FactInternetSales</span>[OrderQuantity] )</div>
+
+      <div class="codehead">Gross Profit &amp; margin <span>01 Core</span></div>
+      <div class="code"><span class="nm">Gross Profit</span> =
+<span class="fn">SUMX</span> ( <span class="nm">FactInternetSales</span>,
+       ( <span class="nm">FactInternetSales</span>[UnitPrice]
+         - <span class="nm">FactInternetSales</span>[UnitCost] )
+           * <span class="nm">FactInternetSales</span>[OrderQuantity] )
+
+<span class="nm">Gross Margin %</span> =
+<span class="fn">DIVIDE</span> ( [Gross Profit], [Revenue] )</div>
+    </div>
+
+    <div class="col">
+      <div class="codehead">Repeat Rate <span>02 Customers</span></div>
+      <div class="code" style="margin-bottom:3.4mm"><span class="nm">Repeat Customers</span> =
+<span class="fn">COUNTROWS</span> (
+    <span class="fn">FILTER</span> (
+        <span class="fn">SUMMARIZE</span> ( <span class="nm">FactInternetSales</span>,
+            <span class="nm">FactInternetSales</span>[CustomerKey],
+            <span class="st">"OrderCount"</span>,
+            <span class="fn">DISTINCTCOUNT</span> (
+                <span class="nm">FactInternetSales</span>[SalesOrderNumber] ) ),
+        [OrderCount] &gt;= <span class="kw">2</span> ) )
+
+<span class="nm">Repeat Rate</span> =
+<span class="fn">DIVIDE</span> ( [Repeat Customers], [Customers] )</div>
+
+      <div class="codehead">Late Line Rate &mdash; zero-safe <span>03 Fulfillment</span></div>
+      <div class="code"><span class="nm">Late Lines</span> =
+<span class="fn">CALCULATE</span> ( <span class="fn">COUNTROWS</span> ( <span class="nm">FactInternetSales</span> ),
+    <span class="fn">KEEPFILTERS</span> ( <span class="nm">FactInternetSales</span>[LateDays] &gt; <span class="kw">0</span> ) ) + <span class="kw">0</span>
+<span class="nm">Late Line Rate</span> = <span class="fn">DIVIDE</span> ( [Late Lines], [Lines], <span class="kw">0</span> )</div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:4mm">
+    <div class="col" style="flex:1.2">
+      <div class="codehead">KPI Revenue &mdash; one formatting pattern for every money card <span>08 KPI values</span></div>
+      <div class="code"><span class="cm">// a text measure: the card's display units turned 27,659 into "28K"</span>
+<span class="nm">KPI Revenue</span> = <span class="kw">VAR</span> v = [Revenue]  <span class="kw">VAR</span> a = <span class="fn">ABS</span> ( v )
+<span class="kw">RETURN</span> <span class="st">"$"</span> &amp; <span class="fn">SWITCH</span> ( <span class="kw">TRUE</span> (),
+    a &gt;= <span class="kw">1000000000</span>, <span class="fn">FORMAT</span> ( v / <span class="kw">1000000000</span>, <span class="st">"0.00"</span> ) &amp; <span class="st">"B"</span>,
+    a &gt;= <span class="kw">1000000</span>,    <span class="fn">FORMAT</span> ( v / <span class="kw">1000000</span>,    <span class="st">"0.00"</span> ) &amp; <span class="st">"M"</span>,
+    a &gt;= <span class="kw">1000</span>,       <span class="fn">FORMAT</span> ( v / <span class="kw">1000</span>,       <span class="st">"0.0"</span> )  &amp; <span class="st">"K"</span>,
+    <span class="fn">FORMAT</span> ( <span class="fn">ROUND</span> ( v, <span class="kw">0</span> ), <span class="st">"#,##0"</span> ) )</div>
+    </div>
+    <div class="col">
+      <div class="panel" style="height:100%;padding:4mm 4.6mm">
+        <h3 style="font-size:10.4pt;margin-bottom:1.8mm">Three deliberate choices</h3>
+        <p style="font-size:8.3pt"><strong>1. SUMX, never SUM.</strong> Quantity is part of the amount, so it is
+        applied inside the iterator; cost and freight follow the same rule, which is why margin is 41.12%.</p>
+        <p style="font-size:8.3pt;margin-bottom:0"><strong>2. +0 on empty results.</strong> Every LateDays value is
+        zero, so the card shows <strong>0.00%</strong> and <strong>0</strong> &mdash; the truth, not a blank that
+        looks like a formatting error.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. OVERVIEW ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>03</b> &nbsp;Dashboard pages</span></div>
+  <div class="shot-head">
+    <div>
+      <div class="eyebrow">Power BI Desktop &middot; 01 of 05</div>
+      <h2>Overview</h2>
+    </div>
+    <p class="shot-purpose">Revenue, profit and margin KPIs with year-over-year indicators, monthly trend,
+    territory and country rankings, product mix, and market/product insights.</p>
+  </div>
+  <div class="frame"><img src="shots/executive-overview-dashboard.png.png" alt="Power BI Overview page"></div>
+  <div class="notes">
+    <div><div class="n-label">Headline row</div><p>$307.09M revenue, $126.29M gross profit and 41.12% margin;
+    revenue grew 98.6%, profit grew 103.7%, and margin improved 1.0 pp vs 2021.</p></div>
+    <div><div class="n-label">Business mix</div><p>North America leads territory groups at $119M; Road leads product-line
+    revenue at about $153M. United States is the top country market.</p></div>
+    <div><div class="n-label">Controls</div><p>Shared period, preset, country, product, territory and customer filters,
+    with a reset control and dynamic KPI and chart updates.</p></div>
+  </div>
+</section>
+
+<!-- ============ 8. PROFITABILITY ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>03</b> &nbsp;Dashboard pages</span></div>
+  <div class="shot-head">
+    <div>
+      <div class="eyebrow">Power BI Desktop &middot; 02 of 05</div>
+      <h2>Profitability</h2>
+    </div>
+    <p class="shot-purpose">Monthly gross profit, top products by gross profit, a recent-three-month trend table,
+    and gross margin by product line.</p>
+  </div>
+  <div class="frame"><img src="shots/profitability-analysis-dashboard.png.png" alt="Power BI Profitability page"></div>
+  <div class="notes">
+    <div><div class="n-label">Monthly trend</div><p>Gross profit is compared with a $5.26M blended monthly reference;
+    the 2022 peak is followed by a mid-year decline and a year-end recovery.</p></div>
+    <div><div class="n-label">Profit, not revenue</div><p>The top-10 list ranks products by gross profit. Standard is the
+    highest-margin product line at about 49.9%.</p></div>
+    <div><div class="n-label">Cost context</div><p>Revenue, gross profit, margin and freight are shown together; freight
+    totals $7.68M (2.50% of revenue).</p></div>
+  </div>
+</section>
+
+<!-- ============ 9. CUSTOMERS ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>03</b> &nbsp;Dashboard pages</span></div>
+  <div class="shot-head">
+    <div>
+      <div class="eyebrow">Power BI Desktop &middot; 03 of 05</div>
+      <h2>Customers</h2>
+    </div>
+    <p class="shot-purpose">Customer repeat behavior, income and gender mix, top-customer detail, customer-country
+    map, and the share of revenue from the top 20% of customers.</p>
+  </div>
+  <div class="frame"><img src="shots/customer-analysis-dashboard.png.png" alt="Power BI Customers page"></div>
+  <div class="notes">
+    <div><div class="n-label">Repeat behavior</div><p>6,865 of 18,484 customers placed two or more orders, a 37.14%
+    repeat rate across 27,659 orders.</p></div>
+    <div><div class="n-label">Pareto check</div><p>The top 20% of customers contribute 71.5% of revenue, below the
+    80% benchmark shown on the page.</p></div>
+    <div><div class="n-label">Customer value</div><p>Revenue averages $16.6K per customer; the customer table and map
+    support ranking and geographic exploration.</p></div>
+  </div>
+</section>
+
+<!-- ============ 10. GEOGRAPHY ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>03</b> &nbsp;Dashboard pages</span></div>
+  <div class="shot-head">
+    <div>
+      <div class="eyebrow">Power BI Desktop &middot; 04 of 05</div>
+      <h2>Geography</h2>
+    </div>
+    <p class="shot-purpose">Revenue by country and territory group, an Azure Maps visual, territory-level
+    performance detail, and geography insights.</p>
+  </div>
+  <div class="frame"><img src="shots/territory-performance-dashboard.png.png" alt="Power BI Geography page"></div>
+  <div class="notes">
+    <div><div class="n-label">Territory mix</div><p>North America is largest at about $119M, followed by Pacific ($95M)
+    and Europe ($93M).</p></div>
+    <div><div class="n-label">Performance table</div><p>Revenue, gross profit and gross margin use green/red formatting
+    to distinguish above- and below-benchmark territory results.</p></div>
+    <div><div class="n-label">Map and filters</div><p>Azure Maps and report slicers support geographic exploration while
+    keeping the fact-territory and customer-country paths separate.</p></div>
+  </div>
+</section>
+
+<!-- ============ 11. DETAIL ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>03</b> &nbsp;Dashboard pages</span></div>
+  <div class="shot-head">
+    <div>
+      <div class="eyebrow">Power BI Desktop &middot; 05 of 05</div>
+      <h2>Detail</h2>
+    </div>
+    <p class="shot-purpose">A filterable, line-level order explorer with revenue, gross profit, margin and
+    fulfillment fields, plus totals that reconcile to the KPI cards.</p>
+  </div>
+  <div class="frame"><img src="shots/detailed-sales-analysis-dashboard.png.png" alt="Power BI Detail page"></div>
+  <div class="notes">
+    <div><div class="n-label">Grain and color</div><p>Order number plus line number is unique across 60,398 rows.
+    Revenue and gross profit are green/red against selected-row averages; margin is colored against the 41.12% baseline.</p></div>
+    <div><div class="n-label">Reconciliation</div><p>The Total row reads <strong>$307,092,945.20</strong> revenue and
+    <strong>$126,290,577.65</strong> gross profit &mdash; matching the KPI cards to the cent.</p></div>
+    <div><div class="n-label">Fulfillment</div><p>Units total 631,920, average lead time is 7.00 days, and late-line
+    rate is 0.00%; the lead-time band filter is specific to this page.</p></div>
+  </div>
+</section>
+
+<!-- ============ 12. KEY INSIGHTS ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>04</b> &nbsp;Key insights</span></div>
+
+  <div class="shot-head" style="margin-bottom:3.6mm">
+    <div>
+      <div class="eyebrow">Full selection &middot; all 60,398 lines</div>
+      <h2>Key insights</h2>
+    </div>
+    <p class="shot-purpose">
+      Every figure below is a control total recomputed from the extract, the model and the browser
+      rendering &mdash; all three agree to the cent.
+    </p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="v">41.12%</div>
+      <div class="l">Blended gross margin</div>
+      <p>$126.29M profit on $307.09M revenue, held across 631,920 units at $485.97 each.</p>
+    </div>
+    <div class="stat b2">
+      <div class="v">37.14%</div>
+      <div class="l">Repeat-customer rate</div>
+      <p>6,865 of 18,484 buyers placed two or more orders &mdash; a reseller base, not a one-off spike.</p>
+    </div>
+    <div class="stat b3">
+      <div class="v">$11,102.82</div>
+      <div class="l">Average order value</div>
+      <p>27,659 orders, 1.50 per customer: few, large, repeatable transactions.</p>
+    </div>
+    <div class="stat b4">
+      <div class="v">49.87%</div>
+      <div class="l">Standard-line margin</div>
+      <p>The smallest line by revenue ($6.33M, 2.06%) is the most profitable one.</p>
+    </div>
+  </div>
+
+  <div class="findings">
+    <div class="col">
+      <div class="finding">
+        <div class="h">One line pays for half the business.</div>
+        <p>Road contributes $153.08M (49.85% of revenue); Mountain adds $106.32M (34.62%) and Touring $41.36M
+        (13.47%). Three lines carry 98% of revenue, so assortment risk is concentrated by design.</p>
+      </div>
+      <div class="finding">
+        <div class="h">Three territory groups, no dependency.</div>
+        <p>North America $118.53M (38.60%), Pacific $95.22M (31.01%), Europe $93.34M (30.39%) &mdash; an 8.2-point
+        spread. But two countries, the United States ($98.61M) and Australia ($91.93M), are 62% of revenue.</p>
+      </div>
+      <div class="finding">
+        <div class="h">The 2021&ndash;2022 jump is a calendar, not growth.</div>
+        <p>$102.85M over 3,690 lines in 2021 against $204.24M over 56,708 in 2022. The display timeline folds four
+        source years into two, so YoY is shown for completeness but never read as like-for-like demand.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="finding">
+        <div class="h">Fulfilment is a policy, not a risk.</div>
+        <p>Average lead time is 7.00 days and 0 of 60,398 lines shipped after their due date. The late-line card
+        is a control that proves the process held &mdash; it cannot be used to argue service improved.</p>
+      </div>
+      <div class="finding">
+        <div class="h">Cost structure is fixed by the source.</div>
+        <p>Freight is exactly 2.50% of revenue ($7.68M) and tax 8% of the unit amount. Neither is a lever the
+        business can pull, so the report reads margin on unit price and unit cost only.</p>
+      </div>
+      <div class="finding">
+        <div class="h">Value per customer is stable, not spiky.</div>
+        <p>$16.6K revenue and $6.8K profit per customer across 18,484 accounts. The top 20% of customers
+        contribute 71.5% of revenue, below the 80% reference; the report makes that concentration visible.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="rulebar" style="margin-top:2.6mm">
+    <span class="badge">Read with care</span>
+    <span>No returns, refunds, budget or quota data exists in the workbook, so every figure here is shipped
+    sales. There is no target variance, no revenue recognised net of returns, and no currency conversion.</span>
+  </div>
+</section>
+
+<!-- ============ 13. BUSINESS IMPACT ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>05</b> &nbsp;Business impact</span></div>
+
+  <div class="shot-head" style="margin-bottom:4mm">
+    <div>
+      <div class="eyebrow">What the report changes</div>
+      <h2>Business impact</h2>
+    </div>
+    <p class="shot-purpose">
+      The figures are the evidence; the decisions are the point. Each impact below rests on a number
+      that could not be produced from the workbook as it stood.
+    </p>
+  </div>
+
+  <div class="impact">
+    <div>
+      <h4>Margin is now a product decision</h4>
+      <p>Road is half the revenue ($153.08M, 49.85%), yet Standard &mdash; 2.06% of revenue &mdash; returns the
+      best margin at 49.87%. A revenue-only view keeps funding the biggest line; this one shows which line
+      earns.</p>
+    </div>
+    <div>
+      <h4>Concentration is measured</h4>
+      <p>Three territory groups land within 8.2 points (38.60% / 31.01% / 30.39%), but the United States and
+      Australia are 62% of revenue between them. Territory investment can now be argued with a number.</p>
+    </div>
+    <div>
+      <h4>Retention has a baseline</h4>
+      <p>6,865 of 18,484 buyers return (37.14%) at $16.6K revenue and $6.8K profit per account. Any account
+      programme can be measured against that line instead of intuition.</p>
+    </div>
+    <div>
+      <h4>Service is provable, not anecdotal</h4>
+      <p>7.00-day average lead time and 0 late lines across 60,398 rows. Fulfilment now has a control that
+      holds at line level and would move the moment the process slipped.</p>
+    </div>
+  </div>
+
+  <table style="margin-top:5.6mm">
+    <thead>
+      <tr>
+        <th style="width:26%">The question</th>
+        <th style="width:35%">In the workbook</th>
+        <th>In the report</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>What did we earn?</strong></td>
+        <td>A sum of a per-unit column, understated by the quantity factor</td>
+        <td><span class="mono">SUMX(UnitPrice &times; Quantity)</span> &mdash; $307,092,945.20 on every page</td>
+      </tr>
+      <tr>
+        <td><strong>Which line earns?</strong></td>
+        <td>No margin field and no hierarchy to rank</td>
+        <td>Gross profit and margin by line and product; best line 49.87%</td>
+      </tr>
+      <tr>
+        <td><strong>Where is the demand?</strong></td>
+        <td>Two territory paths that disagree, six countries unranked</td>
+        <td>One agreed path per visual: 3 groups, 6 countries, 10 territories</td>
+      </tr>
+      <tr>
+        <td><strong>Who is the buyer?</strong></td>
+        <td>18,484 customer rows with no repeat or value logic</td>
+        <td>37.14% repeat rate; top 20% contribute 71.5% of revenue; $16.6K revenue per customer</td>
+      </tr>
+      <tr>
+        <td><strong>Does service hold?</strong></td>
+        <td>No lead-time field and no late-delivery flag</td>
+        <td>7.00-day average lead time, 0 late lines of 60,398</td>
+      </tr>
+      <tr>
+        <td><strong>Can we trust it?</strong></td>
+        <td>Manual cross-checks, no reconciliation trail</td>
+        <td>10/10 integrity checks; the Detail footer reconciles to the cent</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout" style="margin-top:5mm">
+    <div class="tag">The net effect</div>
+    <p>A spreadsheet that could not state revenue correctly has become a model that states it once, provably,
+    on every page &mdash; and that a commercial reader can filter, drill and challenge without opening Excel.</p>
+  </div>
+
+  <div class="strip">
+    <div><b>One workbook in, one model out</b>
+    5 pages &middot; 65 measures &middot; 7 tables &middot; 6 relationships &middot; 60,398 lines, none dropped
+    &middot; every figure traced back to the row that produced it.</div>
+  </div>
+</section>
+
+<!-- ============ 14. TECHNICAL SKILLS ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>06</b> &nbsp;Technical skills</span></div>
+
+  <div class="shot-head" style="margin-bottom:4.4mm">
+    <div>
+      <div class="eyebrow">How it was built</div>
+      <h2>Technical skills demonstrated</h2>
+    </div>
+    <p class="shot-purpose">
+      Everything below was done from a single read-only workbook, with no database, no external service
+      and no manual refresh between captures.
+    </p>
+  </div>
+
+  <div class="skills">
+    <div>
+      <h3>Data modelling &amp; preparation</h3>
+      <ul>
+        <li><b>Star schema</b> &mdash; one fact and five dimensions, six relationships with explicit cardinality,
+        and a grain (order + line) proven unique across 60,398 rows.</li>
+        <li><b>Date-table discipline</b> &mdash; a dedicated 2021&ndash;2022 calendar marked as the date table,
+        with raw YYYYMMDD keys hidden so no visual can slice on the wrong field.</li>
+        <li><b>Filter-direction design</b> &mdash; diagnosing why a single-direction relationship silently
+        disabled the period presets, and keeping the bridge bidirectional on purpose.</li>
+        <li><b>Power Query (M)</b> &mdash; <span class="mono">File.Contents</span> partitions, type enforcement,
+        zero-length strings normalised to null, all-null and duplicate-language columns pruned.</li>
+        <li><b>Source discipline</b> &mdash; extract to curated CSVs, never write back, and drop keys that have
+        no dimension rather than inventing a join.</li>
+        <li><b>Extraction pipeline</b> &mdash; Python parses the workbook with stdlib zip/XML streaming and emits
+        seven curated CSVs: one per table plus the preset bridge.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>DAX &amp; analytical logic</h3>
+      <ul>
+        <li><b>Iterator-based aggregation</b> &mdash; <span class="mono">SUMX</span> over unit price and unit
+        cost, because quantity is not baked into the amount columns.</li>
+        <li><b>Safe ratios</b> &mdash; <span class="mono">DIVIDE</span> with an alternate result everywhere a
+        denominator can be empty; margin, AOV and rates never divide by zero.</li>
+        <li><b>Zero-safe counting</b> &mdash; <span class="mono">KEEPFILTERS</span> plus <span class="mono">+ 0</span>
+        so a genuinely empty result reads 0, not blank.</li>
+        <li><b>Time intelligence</b> &mdash; <span class="mono">SAMEPERIODLASTYEAR</span> for prior-year revenue,
+        profit and margin, with the change expressed in percentage points.</li>
+        <li><b>Context and formatting</b> &mdash; <span class="mono">DISTINCTCOUNT</span>,
+        <span class="mono">SUMMARIZE</span>, <span class="mono">FILTER</span>, <span class="mono">SELECTEDVALUE</span>,
+        and <span class="mono">SWITCH</span>-based text measures that control exactly how a card reads.</li>
+        <li><b>Measure architecture</b> &mdash; 65 measures in eight display folders, where text KPIs reuse the
+        base measures so a formatting change can never fork the logic.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Report, engineering &amp; QA</h3>
+      <ul>
+        <li><b>Report design</b> &mdash; five-page PBIR layout, a shared filter bar on every page, layered KPI
+        cards, and a provenance footer that states source, rule, timeline and snapshot.</li>
+        <li><b>Interaction design</b> &mdash; slicer actions (<span class="mono">ClearAllSlicers</span>), page
+        navigation, cross-filtering, and a Detail explorer that reconciles to the summary cards.</li>
+        <li><b>Code-generated assets</b> &mdash; Python generators for the TMDL model and PBIR pages, plus a
+        field-reference check that validates every visual against the model.</li>
+        <li><b>Reconciliation testing</b> &mdash; control totals recomputed from source, model and rendering,
+        10/10 integrity checks, and the amount rule re-tested on every rebuild.</li>
+        <li><b>Evidence capture</b> &mdash; full-resolution captures of the current Power BI Desktop report pages,
+        cropped to the report canvas.</li>
+        <li><b>Documentation</b> &mdash; a README recording the page map, control totals, rebuild steps and every
+        known limitation, so another analyst can audit or rebuild the model.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tools">
+    <span>Toolkit</span> &nbsp;Power BI Desktop &middot; Power Query (M) &middot; DAX &middot;
+    PBIP (TMDL + PBIR) &middot; Python 3.13 (stdlib XML/zip parsing) &middot; Excel &middot;
+    Azure SQL Database/T-SQL reference integration &middot; Edge for PDF authoring.
+  </div>
+
+  <div class="strip" style="margin-top:4.4mm">
+    <div><b>What that adds up to</b>
+    a model that cannot silently misstate revenue, a report a non-technical reader can operate
+    unaided, and a documented trail from the source row to the number on the screen.</div>
+  </div>
+</section>
+
+<!-- ============ 12. VALIDATION ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>07</b> &nbsp;Validation &amp; reconciliation</span></div>
+
+  <div class="shot-head" style="margin-bottom:4mm">
+    <div>
+      <div class="eyebrow">Controls, tie-out and caveats</div>
+      <h2>Validation &amp; reconciliation</h2>
+    </div>
+    <p class="shot-purpose">
+      Ten integrity checks run on every open &mdash; rows, revenue, profit, units, orders, customers, line
+      uniqueness, the amount rule, key resolution and late lines. Current state: 10/10 pass, and every KPI
+      ties back to the order lines that produced it.
+    </p>
+  </div>
+
+  <div class="cols">
+    <div class="col" style="flex:1.02">
+      <div class="codehead" style="margin-bottom:1.6mm">Control totals &mdash; verified</div>
+      <table style="font-size:8.6pt">
+        <tbody>
+          <tr><td>Order lines</td><td class="num"><strong>60,398</strong></td></tr>
+          <tr><td>Units</td><td class="num"><strong>631,920</strong></td></tr>
+          <tr><td>Revenue</td><td class="num"><strong>$307,092,945.20</strong></td></tr>
+          <tr><td>Gross profit</td><td class="num"><strong>$126,290,577.65</strong></td></tr>
+          <tr><td>Gross margin</td><td class="num"><strong>41.12%</strong></td></tr>
+          <tr><td>Orders</td><td class="num"><strong>27,659</strong></td></tr>
+          <tr><td>Customers</td><td class="num"><strong>18,484</strong></td></tr>
+          <tr><td>Repeat customers</td><td class="num"><strong>6,865 (37.14%)</strong></td></tr>
+          <tr><td>Average order value</td><td class="num"><strong>$11,102.82</strong></td></tr>
+          <tr><td>Freight cost</td><td class="num"><strong>$7,677,351.65 (2.50%)</strong></td></tr>
+          <tr><td>Average lead time</td><td class="num"><strong>7.00 days</strong></td></tr>
+          <tr><td>Late lines</td><td class="num"><strong>0</strong></td></tr>
+          <tr><td>Countries / territories / groups</td><td class="num"><strong>6 / 10 / 3</strong></td></tr>
+          <tr><td>2021 revenue</td><td class="num"><strong>$102,854,715.37</strong> (3,690 lines)</td></tr>
+          <tr><td>2022 revenue</td><td class="num"><strong>$204,238,229.83</strong> (56,708 lines)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col" style="flex:1.18">
+      <div class="codehead" style="margin-bottom:1.6mm">Limitations &mdash; verified against the workbook</div>
+      <ul class="lim">
+        <li><strong>Per-unit amounts.</strong> Any new measure must multiply by <span class="mono">OrderQuantity</span>;
+        <span class="mono">SUM(SalesAmount)</span> is never used.</li>
+        <li><strong>Two timelines.</strong> Customer first-purchase and product start/end dates stay on the source
+        calendar and are not used for time intelligence.</li>
+        <li><strong>No product hierarchy.</strong> Subcategory and category names are not recoverable from this
+        workbook, so product analysis stops at the line and product.</li>
+        <li><strong>No promotion or currency dimension.</strong> Keys are dropped; all amounts are in one reporting
+        currency with no conversion applied.</li>
+        <li><strong>No returns, budget or quota.</strong> Shipped sales only &mdash; no target variance.</li>
+        <li><strong>Territory is reachable twice.</strong> The fact key drives territory visuals and the customer
+        dimension drives country visuals; mixing them in one visual would create an ambiguous path.</li>
+        <li><strong>Dimension coverage.</strong> Only 158 of 606 products sell, and territory 11 exists but is never
+        used, so counting the catalogue requires an outer join.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:5.4mm">
+    <div class="tag">The tie-out</div>
+    <p>$307,092,945.20 on the Overview card, $307,092,945.20 in the Detail footer, and the same figure when the
+    extract is recomputed from the workbook &mdash; three independent paths to one number. That is the standard
+    every figure in this report is held to.</p>
+  </div>
+
+</section>
+
+<!-- ============ 15. NEXT STEPS ============ -->
+<section class="page">
+  <div class="runhead"><span>AdventureWorks Sales Analytics</span><span><b>08</b> &nbsp;Next steps</span></div>
+
+  <div class="shot-head" style="margin-bottom:4.2mm">
+    <div>
+      <div class="eyebrow">Where this goes next</div>
+      <h2>Next steps</h2>
+    </div>
+    <p class="shot-purpose">
+      Four additions that would turn a finished analytical model into a governed, decision-grade product.
+      Each is additive &mdash; none requires reopening what has already been reconciled.
+    </p>
+  </div>
+
+    <div class="next">
+    <div><b>Restore the hierarchy</b>Source subcategory and category names externally, then add a two-level
+    product drill that keeps the 158-product filter intact.<span>Unlocks category-level margin &mdash; the one dimension the workbook cannot supply.</span></div>
+    <div><b>Add targets</b>Load budget or quota by territory and month to convert margin reporting into variance
+    reporting.<span>Turns &ldquo;how did we do?&rdquo; into &ldquo;did we hit the plan, and where did we miss?&rdquo;</span></div>
+    <div><b>Implement Row-Level Security</b>Apply row-level security on territory group and publish the report as an app with a
+    scheduled refresh.<span>Lets a sales director see their region without exposing the other two.</span></div>
+    <div><b>Deepen the drill</b>Promote the Detail page to true drillthrough from the product and country
+    visuals, keeping the reconciling footer.<span>Moves a reader from &ldquo;that number looks wrong&rdquo; to the exact lines in one click.</span></div>
+  </div>
+
+  <div class="codehead" style="margin-top:6mm;margin-bottom:1.8mm">What ships with this project</div>
+  <div class="deliver">
+     <div><b>AdventureWorks Sales.pbix</b>
+       <p>The packaged report: five visible pages, model embedded, opens with no refresh prompt.</p></div>
+    <div><b>pbi/ &mdash; editable source</b>
+      <p>TMDL semantic model and PBIR report definition, rebuildable from the workbook.</p></div>
+    <div><b>dashboard/ &mdash; reference build</b>
+      <p>Dependency-free HTML dashboard carrying the ten integrity checks used to test the model.</p></div>
+     <div><b>portfolio/ &mdash; this document</b>
+       <p>HTML source, five current Power BI Desktop captures, and the rendered PDF.</p></div>
+  </div>
+
+  <div class="watch">
+    <div>
+      <span class="n">01</span>
+      <h4>Keep the grain</h4>
+      <p>Every new page stays at one row per order line &mdash; <span class="mono">SalesOrderNumber</span> plus
+      <span class="mono">SalesOrderLineNumber</span>. Because revenue is a <span class="mono">SUMX</span> over
+      quantity, a table that fans the fact out would inflate $307.09M without raising a single error.</p>
+    </div>
+    <div>
+      <span class="n">02</span>
+      <h4>Isolate the targets</h4>
+      <p>A budget table must reach the fact through the territory and calendar dimensions, never directly.
+      Joined at line level the quota is multiplied by the number of orders, and every variance figure
+      becomes confidently wrong.</p>
+    </div>
+    <div>
+      <span class="n">03</span>
+      <h4>Reuse the path</h4>
+      <p>Territory is reachable from the fact and again via customer &rarr; geography. Pick one per visual.
+      Enabling both reintroduces the ambiguous filter path this model was built to remove.</p>
+    </div>
+  </div>
+
+  <div class="closing">
+    <div class="rule"></div>
+    <p class="big">The model is finished and reconciled. What it needs next is richer context &mdash; hierarchy,
+    targets, security &mdash; not repair.</p>
+    <div class="meta">AdventureWorks Sales Analytics &middot; Data analytics portfolio project &middot; November 2026</div>
+  </div>
+</section>
+
+</body>
+</html>

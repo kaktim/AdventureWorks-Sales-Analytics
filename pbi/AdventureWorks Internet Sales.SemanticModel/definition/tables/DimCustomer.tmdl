@@ -1,0 +1,123 @@
+table DimCustomer
+	lineageTag: c04033c0-d8e5-4ed9-a05f-4cbc6e58d71c
+
+	column CustomerKey
+		dataType: int64
+		isHidden
+		isKey
+		formatString: 0
+		lineageTag: d09118ca-5b64-47c7-a8ca-16dec65d289d
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+	column CustomerAlternateKey
+		dataType: string
+		isHidden
+		lineageTag: 0e06cb68-5ba3-4b40-90e1-048fc36d9517
+		summarizeBy: none
+		sourceColumn: CustomerAlternateKey
+
+	column CustomerName
+		dataType: string
+		lineageTag: 832d6a56-4b1b-43bb-9105-6048131cc9fa
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+	column Gender
+		dataType: string
+		lineageTag: fde0a0e3-1fcf-4fc1-90cd-a15af38b1a65
+		summarizeBy: none
+		sourceColumn: Gender
+
+	column YearlyIncome
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: 817718b1-8601-4da2-80e1-b624f490bcc3
+		summarizeBy: none
+		sourceColumn: YearlyIncome
+
+	column IncomeBand
+		dataType: string
+		lineageTag: cad8ac50-3a36-426d-a6f4-577f8d611a80
+		summarizeBy: none
+		sourceColumn: IncomeBand
+
+	column Education
+		dataType: string
+		lineageTag: 7ac2717c-ef17-47b9-af2e-0a6aba0240a2
+		summarizeBy: none
+		sourceColumn: Education
+
+	column GeographyKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a0ac0e74-7074-4dc1-a26e-c824217123b4
+		summarizeBy: none
+		sourceColumn: GeographyKey
+
+	column City
+		dataType: string
+		lineageTag: 5e5d3907-b032-4c57-ab35-f0b5d757cb08
+		summarizeBy: none
+		sourceColumn: City
+
+	column StateProvince
+		dataType: string
+		lineageTag: 62ff58f1-4749-4b13-b9c7-a21f1e724ffe
+		summarizeBy: none
+		sourceColumn: StateProvince
+
+	column 'Customer Country'
+		dataType: string
+		lineageTag: be8eb038-fe49-41c6-b075-9618e4bdddf3
+		summarizeBy: none
+		sourceColumn: Country
+
+	column LifetimeRevenue
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: c4a82d76-4354-485e-8f09-6b6cc710f665
+		summarizeBy: none
+		sourceColumn: LifetimeRevenue
+
+	column LifetimeOrders
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 3a35efa0-b5e2-4c57-8745-46c5a5cf8a09
+		summarizeBy: none
+		sourceColumn: LifetimeOrders
+
+	column RepeatCustomer
+		dataType: string
+		lineageTag: 60740bcd-9d8b-4f63-aa16-eb7125aec5c6
+		summarizeBy: none
+		sourceColumn: RepeatCustomer
+
+	column RevenueBand
+		dataType: string
+		lineageTag: 8fb162ba-207a-4a4a-b33c-c06b6844a8de
+		summarizeBy: none
+		sourceColumn: RevenueBand
+
+	column CustomerTier
+		dataType: string
+		lineageTag: 255b11e7-caec-4485-ab80-995940679407
+		summarizeBy: none
+		sourceColumn: CustomerTier
+
+	partition DimCustomer = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\PATH_TO_REPO\powerbi\model_data\DimCustomerModel.csv"), [Delimiter = ",", Columns = 16, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"CustomerKey", Int64.Type}, {"CustomerAlternateKey", type text}, {"CustomerName", type text}, {"Gender", type text}, {"YearlyIncome", Int64.Type}, {"IncomeBand", type text}, {"Education", type text}, {"GeographyKey", Int64.Type}, {"City", type text}, {"StateProvince", type text}, {"Country", type text}, {"LifetimeRevenue", type number}, {"LifetimeOrders", Int64.Type}, {"RepeatCustomer", type text}, {"RevenueBand", type text}, {"CustomerTier", type text}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

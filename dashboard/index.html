@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>AdventureWorks · Internet Sales Analytics</title>
+  <meta name="description" content="Interactive AdventureWorks Internet Sales dashboard: revenue, profitability, customers, geography and order-line detail.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="boot">Loading 60,398 sales lines…</div>
+
+  <header class="topbar">
+    <div class="shell topbar-in">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">AW</span>
+        <span>
+          <span class="brand-kicker">AdventureWorks · Internet Sales</span>
+          <span class="brand-name">Sales Performance Studio</span>
+        </span>
+      </div>
+      <div class="topbar-meta">
+        <span class="meta-block">
+          <span class="meta-label">Source</span>
+          <span class="meta-value" id="metaSource">AdventureWorksDW.xlsx</span>
+        </span>
+        <span class="meta-block">
+          <span class="meta-label">Reporting period</span>
+          <span class="meta-value" id="metaPeriod">2021 – 2022</span>
+        </span>
+        <span class="meta-block">
+          <span class="meta-label">Fact rows</span>
+          <span class="meta-value" id="metaRows">—</span>
+        </span>
+        <span class="meta-block">
+          <span class="meta-label">Generated (UTC)</span>
+          <span class="meta-value" id="metaGenerated">—</span>
+        </span>
+        <span class="pill" title="Every control total reconciles to the workbook. See Data notes.">
+          <span class="dot" aria-hidden="true"></span> Reconciled
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="subbar" aria-label="Report pages">
+    <div class="shell subbar-in">
+      <div class="tabs" id="tabs" role="tablist">
+        <button class="tab" data-page="overview" role="tab"><span class="tab-num">01</span> Overview</button>
+        <button class="tab" data-page="profitability" role="tab"><span class="tab-num">02</span> Profitability</button>
+        <button class="tab" data-page="customers" role="tab"><span class="tab-num">03</span> Customers</button>
+        <button class="tab" data-page="geography" role="tab"><span class="tab-num">04</span> Geography</button>
+        <button class="tab" data-page="detail" role="tab"><span class="tab-num">05</span> Detail</button>
+      </div>
+      <div class="subbar-right">
+        <span class="hint">Click a mark to cross-filter · Esc clears</span>
+        <button class="ghost-btn" id="exportBtn" type="button" title="Export the current filtered view as CSV">Export view</button>
+        <button class="ghost-btn" id="notesBtn" type="button" title="Validation controls, assumptions and traceability">Data notes</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="filterbar">
+    <div class="shell filter-in">
+      <div class="date-filter">
+        <label for="dateFrom">Period</label>
+        <input type="date" id="dateFrom" min="2021-01-01" max="2022-12-31" value="2021-01-01" aria-label="Start date">
+        <span class="date-sep">→</span>
+        <input type="date" id="dateTo" min="2021-01-01" max="2022-12-31" value="2022-12-31" aria-label="End date">
+        <div class="presets" id="presets" role="group" aria-label="Period presets">
+          <button type="button" data-preset="all" class="active">All</button>
+          <button type="button" data-preset="2021">2021</button>
+          <button type="button" data-preset="2022">2022</button>
+          <button type="button" data-preset="h2">H2 2022</button>
+        </div>
+      </div>
+
+      <div class="filters" id="filters">
+        <details class="ms" data-filter="countries">
+          <summary>Country <span class="ms-count" data-count="countries">All</span><span class="caret" aria-hidden="true"></span></summary>
+          <div class="ms-menu" id="menuCountries"></div>
+        </details>
+        <details class="ms" data-filter="lines">
+          <summary>Product line <span class="ms-count" data-count="lines">All</span><span class="caret" aria-hidden="true"></span></summary>
+          <div class="ms-menu" id="menuLines"></div>
+        </details>
+        <details class="ms" data-filter="genders">
+          <summary>Gender <span class="ms-count" data-count="genders">All</span><span class="caret" aria-hidden="true"></span></summary>
+          <div class="ms-menu" id="menuGenders"></div>
+        </details>
+        <details class="ms" data-filter="bands">
+          <summary>Income band <span class="ms-count" data-count="bands">All</span><span class="caret" aria-hidden="true"></span></summary>
+          <div class="ms-menu" id="menuBands"></div>
+        </details>
+        <button class="ghost-btn" id="resetFilters" type="button">Reset filters</button>
+      </div>
+
+      <div class="chips" id="chips"><span class="chips-empty">No filters applied</span></div>
+    </div>
+  </div>
+
+  <main class="shell main" id="app" aria-live="polite"></main>
+
+  <footer class="footer">
+    <div class="shell footer-in">
+      <span>AdventureWorks Internet Sales · interactive analytics built from <b>AdventureWorksDW.xlsx</b></span>
+      <span id="footerMeta">All monetary values in reporting currency · Generated —</span>
+    </div>
+  </footer>
+
+  <div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+
+  <div id="modal" class="modal" hidden>
+    <div class="modal-backdrop" data-close-modal></div>
+    <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="modal-head">
+        <div>
+          <div class="card-kicker">Validation &amp; traceability</div>
+          <h2 id="modalTitle">Data notes</h2>
+        </div>
+        <button class="modal-close" type="button" data-close-modal aria-label="Close data notes">×</button>
+      </header>
+      <div class="modal-body" id="modalBody"></div>
+    </section>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

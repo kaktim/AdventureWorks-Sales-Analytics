@@ -1,0 +1,42 @@
+table DimGeography
+	lineageTag: 5be423e6-90a1-43d0-90d8-e08d74320c8b
+
+	column GeographyKey
+		dataType: int64
+		isHidden
+		isKey
+		formatString: 0
+		lineageTag: 2ab3415f-5c2f-454d-a27f-068e2b287b5d
+		summarizeBy: none
+		sourceColumn: GeographyKey
+
+	column City
+		dataType: string
+		lineageTag: 60648dfd-96fb-485a-b2f6-39972424cd95
+		summarizeBy: none
+		sourceColumn: City
+
+	column StateProvince
+		dataType: string
+		lineageTag: 1dcbf10d-c42e-49b9-b60e-b317f6e83b7b
+		summarizeBy: none
+		sourceColumn: StateProvince
+
+	column GeographyCountry
+		dataType: string
+		lineageTag: 47621212-2a91-4e6a-859a-a0b808a1de8c
+		summarizeBy: none
+		sourceColumn: Country
+
+	partition DimGeography = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\PATH_TO_REPO\powerbi\model_data\DimGeographyModel.csv"), [Delimiter = ",", Columns = 4, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"GeographyKey", Int64.Type}, {"City", type text}, {"StateProvince", type text}, {"Country", type text}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+
